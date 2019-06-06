@@ -1,0 +1,33 @@
+{
+  "name": "ts-make-wheels",
+  "version": "1.0.0",
+  "description": "用ts造轮子",
+  "scripts": {
+    "start": "webpack-dev-server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lycHub/ts-make-wheels.git"
+  },
+  "keywords": [
+    "typescript"
+  ],
+  "author": "Madao",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lycHub/ts-make-wheels/issues"
+  },
+  "homepage": "https://github.com/lycHub/ts-make-wheels#readme",
+  "devDependencies": {
+    "css-loader": "^2.1.1",
+    "html-webpack-plugin": "^3.2.0",
+    "less": "^3.9.0",
+    "less-loader": "^5.0.0",
+    "style-loader": "^0.23.1",
+    "ts-loader": "^5.4.3",
+    "typescript": "^3.4.5",
+    "webpack": "^4.30.0",
+    "webpack-cli": "^3.3.1",
+    "webpack-dev-server": "^3.3.1"
+  }
+}
