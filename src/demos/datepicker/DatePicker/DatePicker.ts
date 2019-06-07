@@ -191,7 +191,7 @@ export class DatePicker extends EventEmitter {
         
         const currentMouth = new Date(this.yearAndMonth.y, this.yearAndMonth.m);
   
-        // 当月第一天和最后一天
+        // currentMouth对应的第一天和最后一天
         const currentMonthFirst = startOfMonth(currentMouth);
         const currentMonthLast = lastDayOfMonth(currentMouth);
         
