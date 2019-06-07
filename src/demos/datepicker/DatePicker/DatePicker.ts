@@ -43,11 +43,12 @@ export class DatePicker extends EventEmitter {
   private tempVal = [];
   
   /*
-   * Partial是ts自带的映射类型，作用是把options下的每个属性都变成可读的
+   * Partial是ts自带的映射类型，作用是把options下的每个属性都变成readonly
    * 参考：https://www.tslang.cn/docs/handbook/advanced-types.html
    * */
   constructor(el: Element | string, options?: Partial<{ [key: string]: any }>) {
     super(['change']);
+    if (!el) return;
     this.el = typeof el === 'string' ? document.querySelector(el) : el;
     this.options = new Options().merge(options);
     let defaultDate = this.options.defaultDate;
