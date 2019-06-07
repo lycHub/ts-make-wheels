@@ -2,7 +2,10 @@ const { resolve } = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-    entry: './src/index.ts',
+    entry: {
+      index: './src/index.ts',
+      datepicker: './src/demos/datepicker/datepicker.ts'
+    },
     devtool: 'cheap-module-eval-source-map',
     devServer: {},
     module: {
@@ -19,9 +22,16 @@ module.exports = {
         ]
     },
     plugins: [
-        new HtmlWebpackPlugin({
-            title: 'Hi TypeScript',
-            template: resolve(__dirname, 'src/index.html')
-        })
+      new HtmlWebpackPlugin({
+        title: 'datepicker',
+        // base: resolve(__dirname, 'src/index.html'),
+        filename: 'demos/datepicker/datepicker.html',
+        template: resolve(__dirname, 'src/demos/datepicker/datepicker.html')
+      }),
+      new HtmlWebpackPlugin({
+        title: 'TypeScript',
+        // base: resolve(__dirname, 'src/index.html'),
+        template: resolve(__dirname, 'src/index.html')
+      })
     ]
 };
