@@ -21,7 +21,11 @@ window.addEventListener('DOMContentLoaded', function () {
     }
   });
   
-  const datepicker2 = new DatePicker(datepickerWrap[1], {
+  /*datepicker.on('change', function (selectedDate: Date) {
+    console.log('change', selectedDate);
+  });*/
+  
+  /*const datepicker2 = new DatePicker(datepickerWrap[1], {
     range: true,
     defaultDate: defaultDate2,
     clickableDate: clickableDate2,
@@ -29,6 +33,6 @@ window.addEventListener('DOMContentLoaded', function () {
     onChange(selectedDate: [Date, Date]) {
       console.log('range', selectedDate);
     }
-  });
+  });*/
   
 });
