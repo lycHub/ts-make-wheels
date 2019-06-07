@@ -7,18 +7,6 @@ for (let a = 0; a < 6; a++) {
 console.log(dateArr);*/
 window.addEventListener('DOMContentLoaded', function () {
   const datepickerWrap = document.getElementsByClassName('calendar-wrapper')[0];
-  const tbody = datepickerWrap.querySelector('table tbody');
-  const datepicker = new DatePicker();
+  const datepicker = new DatePicker(datepickerWrap);
   
-  
-  /*let dateTr = '';
-  dateArr.forEach(item => {
-    let dateTd = '';
-    item.forEach(day => {
-      dateTd += `<td>${day}</td>`
-    });
-    dateTr += `<tr>${dateTd}</tr>`
-  });
-  tbody.innerHTML = dateTr;*/
-  // console.log('dasdasdas', dateTr);
 });

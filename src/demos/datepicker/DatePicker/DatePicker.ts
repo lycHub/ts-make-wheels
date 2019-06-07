@@ -1,4 +1,13 @@
-import { isToday, startOfDay, startOfMonth, lastDayOfMonth, compareDesc, isAfter, isSameDay, isWithinRange } from 'date-fns';
+import {
+  isToday,
+  startOfDay,
+  startOfMonth,
+  lastDayOfMonth,
+  compareDesc,
+  isAfter,
+  isSameDay,
+  isWithinRange
+} from 'date-fns';
 import {HqDate, SelectedDate, YearMonth} from "./definition-datepicker";
 import {Options} from "./Options.ts";
 export class DatePicker {
@@ -9,10 +18,10 @@ export class DatePicker {
   
   
   /*
-  * 多月日期数据
-  * 每个月都是一个日历面板
-  * 每个面板都有对应的YearMonth和HqDate[][]
-  * */
+   * 多月日期数据
+   * 每个月都是一个日历面板
+   * 每个面板都有对应的YearMonth和HqDate[][]
+   * */
   private dateArrs: Array<{
     ym: YearMonth;
     date: HqDate[][]
@@ -24,20 +33,17 @@ export class DatePicker {
   // 配置项，一般赋值后不可修改
   private readonly options: Options;
   
+  private readonly el: Element;
   
-  
-  
- 
- 
   /*
-  * Partial是ts自带的映射类型，作用是把Options下的每个属性都变成可读的
-  * 参考：https://www.tslang.cn/docs/handbook/advanced-types.html
-  * */
-  constructor( options?: Partial<Options>) {
+   * Partial是ts自带的映射类型，作用是把Options下的每个属性都变成可读的
+   * 参考：https://www.tslang.cn/docs/handbook/advanced-types.html
+   * */
+  constructor(el: Element | string, options?: Partial<Options>) {
+    this.el = typeof el === 'string' ? document.querySelector(el) : el;
     this.options = new Options().merge(options);
     this.createMonths();
   }
-  
   
   
   // 创建多个日历面板
@@ -45,7 +51,7 @@ export class DatePicker {
     this.dateArrs = [];
     const month = this.currentDate.getMonth();    // 5
     const year = this.currentDate.getFullYear();  // 2019
-    for (let i = 0 ; i < this.options.monthNum; i++) {
+    for (let i = 0; i < this.options.monthNum; i++) {
       let m = month + i;
       let y = year;
       if (m > 11) {
@@ -55,8 +61,8 @@ export class DatePicker {
       this.yearAndMonth = {y, m};
       // console.log(this.yearAndMonth);
       // const currentDate = new Date(y, m, 1);
-    
-    
+      
+      
       this.dateArrs.push({
         ym: this.yearAndMonth,
         date: this.createMonth()  // HqDate[][]
@@ -68,22 +74,54 @@ export class DatePicker {
   }
   
   private initDatePicker() {
-    const datepickerWrap = document.getElementsByClassName('calendar-wrapper')[0];
-    const tbody = datepickerWrap.querySelector('table tbody');
-  
-  
-    let dateTr = '';
-    this.dateArrs[0].date.forEach(item => {
-     let dateTd = '';
-     item.forEach(day => {
-      dateTd += `<td>${day.label}</td>`
-     });
-      dateTr += `<tr>${dateTd}</tr>`
-     });
-     tbody.innerHTML = dateTr;
-    // console.log('dasdasdas', dateTr);
+    let datePanel = '';
+    this.dateArrs.forEach(panel => {
+      let dateTr = '';
+      panel.date.forEach(item => {
+        let dateTd = '';
+        item.forEach(day => {
+          let classes = '';
+          if (day.isToday) {
+            classes += ' today';
+          }
+          if (day.actived) {
+            classes += ' actived';
+          }
+          if (day.disabled) {
+            classes += ' disabled';
+          }
+          if (day.notInCurrentMonth) {
+            classes += ' notInCurrentMonth';
+          }
+          dateTd += `<td class="${classes}">${day.label}</td>`;
+        });
+        dateTr += `<tr>${dateTd}</tr>`;
+        datePanel = `<div class="hq-calendar-day" *ngFor="let dates of hqDate_arrs;">
+                      <div class="hq-calendar-header">
+                        <span>${panel.ym.y}年${panel.ym.y + 1}月</span>
+                      </div>
+                      <table>
+                        <thead>
+                        <tr>
+                          <th>日</th>
+                          <th>一</th>
+                          <th>二</th>
+                          <th>三</th>
+                          <th>四</th>
+                          <th>五</th>
+                          <th>六</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                          ${dateTr}
+                        </tbody>
+                      </table>
+                    </div>`;
+      });
+    });
+    // console.log('datePanel', datePanel);
+    this.el.innerHTML = datePanel;
   }
-  
   
   
   // 创建日历面板
@@ -135,7 +173,7 @@ export class DatePicker {
     //  minClickDate && compareDesc(firstDate, startOfDay(minClickDate)) === 1
     if (clickableDate instanceof Array) {
       return !isWithinRange(date, clickableDate[0], clickableDate[1]);
-    }else{
+    } else {
       return compareDesc(date, startOfDay(clickableDate)) === 1;
     }
   }
@@ -155,7 +193,7 @@ export class DatePicker {
   
   
   // 如果是范围选择，Date[0]Date[1]之前
-  private validDateRange(dateRange: Date[]): Date[]{
+  private validDateRange(dateRange: Date[]): Date[] {
     if (!dateRange) return [];
     const dateRangeCopy = dateRange.slice();
     if (isAfter(dateRangeCopy[0], dateRangeCopy[1])) {
@@ -164,4 +202,8 @@ export class DatePicker {
     return dateRangeCopy;
   }
   
+  
+  /*private getElement(el: HTMLElement | string): HTMLElement {
+    return typeof el === 'string' ? document.querySelector(el) : el;
+  }*/
 }
