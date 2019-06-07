@@ -1,21 +1,20 @@
 .calendar-wrapper{
   position: relative;
   display: flex;
-  justify-content: space-between;
+  //justify-content: space-between;
   align-items: center;
   user-select: none;
   border: 1px solid #ccc;
-  width: 300px;
-  a{
+  .change-arrow{
     position: absolute;
     font-size: 20px;
     color: #1b1d1f;
     cursor: pointer;
     top:12px;
-    &.hq-next-month{
+    &.next-month{
       right: 7px;
     }
-    &.hq-last-month{
+    &.prev-month{
       left: 7px;
     }
     &:hover{
@@ -60,6 +59,7 @@
         cursor: pointer;
         &:hover, &.today{
           background-color: #d6d6d6;
+          color: #000;
         }
 
         &.notInCurrentMonth{    // 不在当前月的样式

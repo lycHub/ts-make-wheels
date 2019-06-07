@@ -10,6 +10,11 @@ import {
 } from 'date-fns';
 import {HqDate, SelectedDate, YearMonth} from "./definition-datepicker";
 import {Options} from "./Options.ts";
+
+/*function isDateRange(pet: SelectedDate): pet is Date[] {
+  return (<Date[]>pet).length !== undefined;
+}*/
+
 export class DatePicker {
   private currentDate = new Date();
   
@@ -28,22 +33,50 @@ export class DatePicker {
   }>;
   
   // 选中的日期
-  _value: SelectedDate;
+  private _value: SelectedDate;
   
   // 配置项，一般赋值后不可修改
   private readonly options: Options;
   
   private readonly el: Element;
   
+  // 计数，范围选择时，判断点了几次
+  private clickNum = 0;
+  
+  private tempVal = [];
+  
   /*
-   * Partial是ts自带的映射类型，作用是把Options下的每个属性都变成可读的
+   * Partial是ts自带的映射类型，作用是把options下的每个属性都变成可读的
    * 参考：https://www.tslang.cn/docs/handbook/advanced-types.html
    * */
-  constructor(el: Element | string, options?: Partial<Options>) {
+  constructor(el: Element | string, options?: Partial<{ [key: string]: any }>) {
     this.el = typeof el === 'string' ? document.querySelector(el) : el;
     this.options = new Options().merge(options);
+    let defaultDate = this.options.defaultDate;
+    /*if (defaultDate instanceof Array) {
+      defaultDate = this.validDateRange(<Date[]>defaultDate);
+    }*/
+    if (defaultDate instanceof Array) {
+      this._value = this.validDateRange(<[Date, Date]>defaultDate);
+    }else {
+      this._value = new Date(<Date>defaultDate);
+    }
+  
+    if (this.currentDate) {
+      this.yearAndMonth = {
+        y: this.currentDate.getFullYear(),
+        m: this.currentDate.getMonth()
+      };
+    }
+    
+    // console.log('_value', this._value);
     this.createMonths();
+  
+    (<HTMLElement>this.el).style.width = (300 * this.options.monthNum) + 'px';
+    this.bindClickEvents();
   }
+  
+  
   
   
   // 创建多个日历面板
@@ -68,8 +101,6 @@ export class DatePicker {
         date: this.createMonth()  // HqDate[][]
       });
     }
-    console.log('dateArrs', this.dateArrs);
-    // this.enableChangeMonth = true;
     this.initDatePicker();
   }
   
@@ -93,12 +124,13 @@ export class DatePicker {
           if (day.notInCurrentMonth) {
             classes += ' notInCurrentMonth';
           }
-          dateTd += `<td class="${classes}">${day.label}</td>`;
+          dateTd += `<td class="${classes}" value="${day.value}">${day.label}</td>`;
         });
         dateTr += `<tr>${dateTd}</tr>`;
-        datePanel = `<div class="hq-calendar-day" *ngFor="let dates of hqDate_arrs;">
+      });
+      datePanel += `<div class="hq-calendar-day">
                       <div class="hq-calendar-header">
-                        <span>${panel.ym.y}年${panel.ym.y + 1}月</span>
+                        <span>${panel.ym.y}年${panel.ym.m + 1}月</span>
                       </div>
                       <table>
                         <thead>
@@ -117,10 +149,19 @@ export class DatePicker {
                         </tbody>
                       </table>
                     </div>`;
-      });
     });
     // console.log('datePanel', datePanel);
-    this.el.innerHTML = datePanel;
+    this.el.innerHTML = `
+      <a class="change-arrow prev-month" dir="prev">&lt;</a>
+      <a class="change-arrow next-month">&gt;</a>` + datePanel;
+  }
+  
+  private bindClickEvents() {
+    /*const arrows = this.el.querySelectorAll('.change-arrow');
+    arrows.forEach(item => {
+      item.addEventListener('click', this.changeMonth.bind(this));
+    });*/
+    this.el.addEventListener('click', this.onPanelClick.bind(this));
   }
   
   
@@ -148,18 +189,17 @@ export class DatePicker {
         date = firstDate.getDate();
         
         // 当月第一天和最后一天
-        const currentMonthFirst = startOfMonth(this.currentDate);
-        const currentMonthLast = lastDayOfMonth(this.currentDate);
-        // const value = format(firstDate, 'YYYY-MM-DD');
+        const currentMouth = new Date(this.yearAndMonth.y, this.yearAndMonth.m);
+        const currentMonthFirst = startOfMonth(currentMouth);
+        const currentMonthLast = lastDayOfMonth(currentMouth);
         
-        // console.log('isSameDay', isSameDay(firstDate, this._value));
         line.push({
           label: date,
           value: new Date(firstDate),
           actived: this.isActive(firstDate),
           isToday: isToday(firstDate),                            // 是当天吗
           disabled: this.isDisabled(firstDate, clickableDate),   // 小于指定日期的不可点
-          notInCurrentMonth: isWithinRange(firstDate, currentMonthFirst, currentMonthLast[1])   // 是否是当月日期
+          notInCurrentMonth: !isWithinRange(firstDate, currentMonthFirst, currentMonthLast)   // 是否是当月日期
         });
       }
       date_arr.push(line);
@@ -193,9 +233,9 @@ export class DatePicker {
   
   
   // 如果是范围选择，Date[0]Date[1]之前
-  private validDateRange(dateRange: Date[]): Date[] {
-    if (!dateRange) return [];
-    const dateRangeCopy = dateRange.slice();
+  private validDateRange(dateRange: [Date, Date]): [Date, Date] {
+    if (!(dateRange instanceof Array)) return dateRange;
+    const dateRangeCopy = <[Date, Date]>dateRange.slice();
     if (isAfter(dateRangeCopy[0], dateRangeCopy[1])) {
       [dateRangeCopy[0], dateRangeCopy[1]] = [dateRangeCopy[1], dateRangeCopy[0]];
     }
@@ -203,7 +243,83 @@ export class DatePicker {
   }
   
   
-  /*private getElement(el: HTMLElement | string): HTMLElement {
-    return typeof el === 'string' ? document.querySelector(el) : el;
-  }*/
+  
+  onPanelClick(evt: MouseEvent) {
+    const dom = <HTMLElement>evt.target;
+    if (dom.classList.contains('change-arrow')) {
+      this.changeMonth(dom);
+    }else if (dom.nodeName.toLowerCase() === 'td') {
+      this.selectDay(dom);
+    }
+  }
+  
+  
+  // 选中日期
+  selectDay(td: Element) {
+    // console.log(td);
+    if (td.classList.contains('disabled')) return;
+    const tds = this.el.querySelectorAll('td');
+    tds.forEach(item => item.classList.remove('actived'));
+    if (this.options.range) {
+      this.rangeClick(td, tds);
+    }else {
+      td.classList.add('actived');
+      this._value = new Date(td.getAttribute('value'));
+      this.emitChange();
+    }
+  }
+  
+  private rangeClick(td: Element, tds: NodeList) {
+    const tdVal = new Date(td.getAttribute('value'));
+    if (++this.clickNum % 2 !== 0) {  // 第一次
+      this.tempVal = [];
+      td.classList.add('actived');
+      this.tempVal[0] = tdVal;
+    } else {
+      if (isSameDay(tdVal, this.tempVal[0]))  return;
+      this.tempVal[1] = tdVal;
+      this._value = this.validDateRange(<[Date, Date]>this.tempVal);
+      // console.log('range', this._value);
+      tds.forEach((item: Element) => {
+        const val = new Date(item.getAttribute('value'));
+        if(isWithinRange(val, this._value[0], this._value[1])) {
+          item.classList.add('actived');
+        }
+      });
+      this.emitChange();
+    }
+  }
+  
+  changeMonth(dom: Element) {
+    let m = this.currentDate.getMonth();
+    let y = this.currentDate.getFullYear();
+    
+    if (dom.getAttribute('dir') === 'prev') {
+      m--;
+      if (m < 0) {
+        m = 11;
+        y--;
+      }
+    } else {
+      m++;
+      if (m > 11) {
+        m = m % 11 - 1;
+        y++;
+      }
+    }
+    
+    this.currentDate = new Date(y, m);
+    this.yearAndMonth = {
+      y: this.currentDate.getFullYear(),
+      m: this.currentDate.getMonth()
+    };
+    this.createMonths();
+  }
+  
+  // 发射选中事件
+  emitChange() {
+    if (this.options.onChange) {
+      this.options.onChange(this._value);
+    }
+  }
 }

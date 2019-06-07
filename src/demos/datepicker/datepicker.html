@@ -7,39 +7,8 @@
   <title><%= htmlWebpackPlugin.options.title %></title>
 </head>
 <body>
-<div class="calendar-wrapper">
-  <a class="hq-last-month pi pi-chevron-left">&lt;</a>
-  <a class="hq-next-month pi pi-chevron-right">&gt;</a>
-  <div class="hq-calendar-day" *ngFor="let dates of hqDate_arrs;">
-    <div class="hq-calendar-header">
-      <span>2019年06月</span>
-    </div>
-    <table>
-      <thead>
-      <tr>
-        <th>日</th>
-        <th>一</th>
-        <th>二</th>
-        <th>三</th>
-        <th>四</th>
-        <th>五</th>
-        <th>六</th>
-      </tr>
-      </thead>
-      <tbody>
-     <!-- <tr *ngFor="let item of dates.date">
-        <td *ngFor="let day of item;"
-            (click)="selectDay(day)"
-            [class.today]="day.isToday"
-            [class.disabled]="day.disabled"
-            [class.actived]="day.actived || isActive(day.value)"
-            [class.notInCurrentMonth]="day.notInCurrentMonth">
-          {{day.label}}
-        </td>
-      </tr>-->
-      </tbody>
-    </table>
-  </div>
-</div>
+<div class="calendar-wrapper"></div>
+<br /><br /><br /><br /><br />
+<div class="calendar-wrapper"></div>
 </body>
 </html>

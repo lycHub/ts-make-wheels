@@ -17,6 +17,8 @@ export class Options {
   // 可点的日期(范围)
   clickableDate: SelectedDate;
   
+  onChange: (arg: SelectedDate) => SelectedDate;
+  
   
   // 合并默认配置
   merge(options?: { [key: string]: any }) {
