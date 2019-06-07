@@ -1,6 +1,79 @@
-@nice-blue: #5B83AD;
-#root {
-  h1{
-    color: @nice-blue;
+.calendar-wrapper{
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  border: 1px solid #ccc;
+  width: 300px;
+  a{
+    position: absolute;
+    font-size: 20px;
+    color: #1b1d1f;
+    cursor: pointer;
+    top:12px;
+    &.hq-next-month{
+      right: 7px;
+    }
+    &.hq-last-month{
+      left: 7px;
+    }
+    &:hover{
+      text-decoration: none;
+    }
+  }
+
+  .hq-calendar-day{
+    width: 300px;
+    border-right: 1px solid #ccc;
+    &:last-child{
+      border-right: none;
+    }
+
+    .hq-calendar-header{
+      padding: 10px 0;
+      text-align: center;
+      background-color: #f0f2f4;
+      span{
+        font-size: 20px;
+        color: #1b1d1f;
+      }
+    }
+
+    table{
+      width: 100%;
+      display: table;
+      border-color: grey;
+      border-collapse:collapse;
+      thead tr th{
+        font-size: 14px;
+        color: #222;
+        padding: 8px 0;
+        background-color: #f6f8fa;
+      }
+      tbody tr td{
+        height: 40px;
+        text-align: center;
+        border-bottom: 1px solid rgba(213, 213, 213, 0.5);
+        font-size: 14px;
+        color: #222;
+        cursor: pointer;
+        &:hover, &.today{
+          background-color: #d6d6d6;
+        }
+
+        &.notInCurrentMonth{    // 不在当前月的样式
+          color: #ccc;
+        }
+        &.disabled{
+          color: #ccc;
+          cursor: not-allowed;
+        }
+        &.actived{  // 选中样式
+          color: #fff;
+          background-color: #186ba0;
+        }
+      }
+    }
   }
 }
