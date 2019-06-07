@@ -1,6 +1,6 @@
 import './datepicker.less';
-import {addDays, subDays} from 'date-fns';
 import {DatePicker} from "./DatePicker/DatePicker.ts";
+import {addDays, subDays} from 'date-fns';
 const currentDate = new Date();
 const clickableDate = [subDays(currentDate, 2), addDays(currentDate, 28)];
 const defaultDate = addDays(currentDate, 5);
