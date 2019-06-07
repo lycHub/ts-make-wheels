@@ -10,16 +10,9 @@ import {
 } from 'date-fns';
 import {HqDate, SelectedDate, YearMonth} from "./definition-datepicker";
 import {Options} from "./Options.ts";
+import EventEmitter from "./EventEmitter.ts";
 
-type EventsMap = {
-  [name: string]: [Function, Object][]
-}
-
-type TypesMap = {
-  [type: string]: string
-}
-
-export class DatePicker {
+export class DatePicker extends EventEmitter {
   private currentDate = new Date();
   
   // 日历面板头部显示的年月
@@ -49,15 +42,12 @@ export class DatePicker {
   
   private tempVal = [];
   
-  
-  events: EventsMap;
-  eventTypes: TypesMap;
-  
   /*
    * Partial是ts自带的映射类型，作用是把options下的每个属性都变成可读的
    * 参考：https://www.tslang.cn/docs/handbook/advanced-types.html
    * */
   constructor(el: Element | string, options?: Partial<{ [key: string]: any }>) {
+    super(['change']);
     this.el = typeof el === 'string' ? document.querySelector(el) : el;
     this.options = new Options().merge(options);
     let defaultDate = this.options.defaultDate;
@@ -82,10 +72,6 @@ export class DatePicker {
   
     (<HTMLElement>this.el).style.width = (300 * this.options.monthNum) + 'px';
     this.bindClickEvents();
-  
-    this.events = {};
-    this.eventTypes = {};
-    this.registerType(['init', 'change']);
   }
   
   
@@ -167,6 +153,8 @@ export class DatePicker {
     this.el.innerHTML = `
       <a class="change-arrow prev-month" dir="prev">&lt;</a>
       <a class="change-arrow next-month">&gt;</a>` + datePanel;
+  
+    this.emitEvent('onInit');
   }
   
   private bindClickEvents() {
@@ -278,7 +266,8 @@ export class DatePicker {
     }else {
       td.classList.add('actived');
       this._value = new Date(td.getAttribute('value'));
-      this.emitChange();
+      this.emitEvent('onChange', this._value);
+      this.trigger('change', this._value);
     }
   }
   
@@ -299,7 +288,8 @@ export class DatePicker {
           item.classList.add('actived');
         }
       });
-      this.emitChange();
+      this.emitEvent('onChange', this._value);
+      this.trigger('change', this._value);
     }
   }
   
@@ -330,47 +320,9 @@ export class DatePicker {
   }
   
   // 发射选中事件
-  private emitChange() {
-    if (this.options.onChange) {
-      this.options.onChange(this._value);
-      this.trigger('change', this._value);
+  private emitEvent(type: string, ...args: any[]) {
+    if (this.options[type]) {
+      this.options[type](this._value, args);
     }
-  }
-  
-  
-  on(type: string, fn: Function, context = this) {
-    // this._checkInTypes(type)
-    if (!this.events[type]) {
-      this.events[type] = [];
-    }
-  
-    // 保存type事件对应的函数
-    this.events[type].push([fn, context])
-    // return this
-  }
-  
-  // 触发type事件
-  trigger(type: string, ...args: any[]) {
-    // this._checkInTypes(type)
-    let events = this.events[type];
-    if (!events) return;
-  
-    let len = events.length;
-    let eventsCopy = events.slice();
-    let ret;
-    for (let i = 0; i < len; i++) {
-      let event = eventsCopy[i];
-      let [fn, context] = event;
-      if (fn) {
-        ret = fn.apply(context, args);
-        if (ret === true) break;
-      }
-    }
-    // return ret;
-  }
-  
-  // 注册预设函数
-  private  registerType(names: string[]) {
-    names.forEach(type => this.eventTypes[type] = type);
   }
 }

@@ -18,6 +18,7 @@ export class Options {
   clickableDate: SelectedDate;
   
   onChange: (arg: SelectedDate) => SelectedDate;
+  onInit: () => void;
   
   
   // 合并默认配置
