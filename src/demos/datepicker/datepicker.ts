@@ -5,9 +5,9 @@ const currentDate = new Date();
 const clickableDate = [subDays(currentDate, 2), addDays(currentDate, 28)];
 const defaultDate = addDays(currentDate, 5);
 
-
 const defaultDate2 = [currentDate, addDays(currentDate, 30)];
 const clickableDate2 = [subDays(currentDate, 2), addDays(currentDate, 58)];
+
 
 window.addEventListener('DOMContentLoaded', function () {
   const datepickerWrap = document.getElementsByClassName('calendar-wrapper');

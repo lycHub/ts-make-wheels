@@ -1,3 +1,6 @@
+/*
+* 这个自定义事件的类是参考黄大仙Bscroll的设计
+* */
 type EventsMap = {
   [name: string]: [Function, Object][];
 }

@@ -17,6 +17,7 @@ export class Options {
   // 可点的日期(范围)
   clickableDate: SelectedDate;
   
+  // 自定义事件
   onChange: (arg: SelectedDate) => SelectedDate;
   onInit: () => void;
   

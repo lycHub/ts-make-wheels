@@ -7,9 +7,5 @@
     "lib": ["es2018", "dom"],
     "experimentalDecorators": true,
     "baseUrl": "./"
-
-    // 下面这两项在写库的时候建议开启
-//    "noImplicitAny": true,      // 不允许any
-//    "strictNullChecks": true   // null和undefined不能赋值给其它类型
   }
 }
