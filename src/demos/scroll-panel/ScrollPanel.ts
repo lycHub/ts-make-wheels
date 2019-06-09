@@ -109,7 +109,7 @@ export class ScrollPanel extends EventEmitter {
   // 绑定各种事件
   private initEvents() {
     // 用变量保存事件主要是为了保证这些dom事件里的this指向
-    // 如果在每个事件函数里单独处理this，那不用这么做也行
+    // 如果在每个事件函数里单独处理this，那不用这么做也行，但是移除事件监听可能会有问题
     this.moveBarH = this.moveBar.bind(this);
     this.moveBar();
     this.onXBarMouseDownH = this.onXBarMouseDown.bind(this);
@@ -231,6 +231,7 @@ export class ScrollPanel extends EventEmitter {
       /*
       * deltaX * scrollWidth / clientWidth = scrollLeft
       * deltaX * scrollWidth = scrollLeft * clientWidth
+      * scrollLeft / scrollWidth = deltaX / clientWidth
       * */
       const content = this.panelDoms.contentViewChild;
       content.scrollLeft += deltaX / this.scrollXRatio;
