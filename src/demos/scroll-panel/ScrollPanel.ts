@@ -35,27 +35,42 @@ export default class ScrollPanel {
   private onDocumentMouseMoveH: (e: MouseEvent | TouchEvent) => void;
   private onDocumentMouseUpH: (e: MouseEvent | TouchEvent) => void;
 
+  private container: HTMLElement;
+
   constructor(el: Element | string, options?: Partial<{ [key: string]: any }>) {
+    this.domHandler = new DomHandler();
 
     // 合并选项
     this.options = new Options().merge(options);
-    const container = <HTMLElement>(typeof el === 'string' ? document.querySelector(el) : el);
-    
-    if (!container) return;
+    this.container = <HTMLElement>(typeof el === 'string' ? document.querySelector(el) : el);
+    if (!this.container) return;
 
-    this.panelDoms = {
-      containerViewChild: container,
-      contentViewChild: container.querySelector('.ui-scrollpanel-content'), // 第一个子节点
-      xBarWrapViewChild: container.querySelector('.bar-wrap-x'),
-      xBarViewChild: container.querySelector('.ui-scrollpanel-bar-x'),
-      yBarWrapViewChild: container.querySelector('.bar-wrap-y'),
-      yBarViewChild: container.querySelector('.ui-scrollpanel-bar-y')
-    }
+    this.container.style.position = this.options.style.position;
+    this.container.style.overflow = this.options.style.overflow;
 
+    this.initScrollBar();
     this.initBarSize();
     this.initEvents();
+  }
 
-    this.domHandler = new DomHandler();
+  private initScrollBar() {
+    const barDom = ` <div class="bar-wrap bar-wrap-x">
+    <div class="ui-scrollpanel-bar ui-scrollpanel-bar-x"></div>
+  </div>
+  <div class="bar-wrap bar-wrap-y">
+    <div class="ui-scrollpanel-bar ui-scrollpanel-bar-y"></div>
+  </div>`;
+    this.container.innerHTML += barDom;
+
+
+    this.panelDoms = {
+      containerViewChild: this.container,
+      contentViewChild: this.container.querySelector('.ui-scrollpanel-content'), // 第一个子节点
+      xBarWrapViewChild: this.container.querySelector('.bar-wrap-x'),
+      xBarViewChild: this.container.querySelector('.ui-scrollpanel-bar-x'),
+      yBarWrapViewChild: this.container.querySelector('.bar-wrap-y'),
+      yBarViewChild: this.container.querySelector('.ui-scrollpanel-bar-y')
+    }
   }
 
 
