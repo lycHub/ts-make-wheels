@@ -1,3 +1,4 @@
+// 每一个日期（td）该有的属性
 export type HqDate = {
   label: number;
   value: Date;

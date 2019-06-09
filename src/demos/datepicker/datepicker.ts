@@ -5,9 +5,9 @@ const currentDate = new Date();
 const clickableDate = [subDays(currentDate, 2), addDays(currentDate, 28)];
 const defaultDate = addDays(currentDate, 5);
 
-
 const defaultDate2 = [currentDate, addDays(currentDate, 30)];
 const clickableDate2 = [subDays(currentDate, 2), addDays(currentDate, 58)];
+
 
 window.addEventListener('DOMContentLoaded', function () {
   const datepickerWrap = document.getElementsByClassName('calendar-wrapper');
@@ -17,15 +17,15 @@ window.addEventListener('DOMContentLoaded', function () {
     defaultDate,
     monthNum: 3,
     onInit() {
-      console.log('onInit');
+      // console.log('onInit');
     },
     onChange(selectedDate: Date) {
-      console.log(selectedDate);
+      // console.log(selectedDate);
     }
   });
   
   datepicker.on('change', function (selectedDate: Date) {
-    console.log('change', selectedDate);
+    console.log('on change', selectedDate);
   });
   
   const datepicker2 = new DatePicker(datepickerWrap[1], {
@@ -34,15 +34,15 @@ window.addEventListener('DOMContentLoaded', function () {
     clickableDate: clickableDate2,
     monthNum: 4,
     onInit() {
-      console.log('onInit');
+      // console.log('onInit');
     },
     onChange(selectedDate: [Date, Date]) {
-      console.log('range', selectedDate);
+      // console.log('range', selectedDate);
     }
   });
   
   datepicker2.on('change', function (selectedDate: [Date, Date]) {
-    console.log('change', selectedDate);
+    console.log('on change', selectedDate);
   });
   
 });

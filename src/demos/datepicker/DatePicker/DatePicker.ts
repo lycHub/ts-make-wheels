@@ -10,7 +10,7 @@ import {
 } from 'date-fns';
 import {HqDate, SelectedDate, YearMonth} from "./definition-datepicker";
 import {Options} from "./Options.ts";
-import EventEmitter from "./EventEmitter.ts";
+import EventEmitter from "../../../tools/EventEmitter.ts";
 
 export class DatePicker extends EventEmitter {
   private currentDate = new Date();
@@ -50,7 +50,10 @@ export class DatePicker extends EventEmitter {
     super(['change']);
     if (!el) return;
     this.el = typeof el === 'string' ? document.querySelector(el) : el;
+    
+    // 合并选项
     this.options = new Options().merge(options);
+    
     let defaultDate = this.options.defaultDate;
     /*if (defaultDate instanceof Array) {
       defaultDate = this.validDateRange(<Date[]>defaultDate);
@@ -68,11 +71,11 @@ export class DatePicker extends EventEmitter {
       };
     }
     
-    // console.log('_value', this._value);
+    // 创建日历面板
     this.createMonths();
   
     (<HTMLElement>this.el).style.width = (300 * this.options.monthNum) + 'px';
-    this.bindClickEvents();
+    this.el.addEventListener('click', this.onPanelClick.bind(this));
   }
   
   
@@ -82,7 +85,7 @@ export class DatePicker extends EventEmitter {
   // 创建多个日历面板
   private createMonths() {
     this.dateArrs = [];
-    const month = this.currentDate.getMonth();    // 5
+    const month = this.currentDate.getMonth();    // 5，注意比实际月份小1
     const year = this.currentDate.getFullYear();  // 2019
     for (let i = 0; i < this.options.monthNum; i++) {
       let m = month + i;
@@ -97,18 +100,21 @@ export class DatePicker extends EventEmitter {
       
       
       this.dateArrs.push({
-        ym: this.yearAndMonth,
-        date: this.createMonth()  // HqDate[][]
+        ym: this.yearAndMonth,    // 每个面板的年月
+        date: this.createMonth()  // HqDate[][]，是一个类似矩阵的二位数组
       });
     }
     this.initDatePicker();
   }
   
   private initDatePicker() {
+    // 单个日历面板的外层dom
     let datePanel = '';
     this.dateArrs.forEach(panel => {
+      // 单个日历面板的6行dom
       let dateTr = '';
       panel.date.forEach(item => {
+        // 每行有7列天数dom
         let dateTd = '';
         item.forEach(day => {
           let classes = '';
@@ -158,14 +164,6 @@ export class DatePicker extends EventEmitter {
     this.emitEvent('onInit');
   }
   
-  private bindClickEvents() {
-    /*const arrows = this.el.querySelectorAll('.change-arrow');
-    arrows.forEach(item => {
-      item.addEventListener('click', this.changeMonth.bind(this));
-    });*/
-    this.el.addEventListener('click', this.onPanelClick.bind(this));
-  }
-  
   
   // 创建日历面板
   private createMonth(): HqDate[][] {
@@ -178,6 +176,7 @@ export class DatePicker extends EventEmitter {
   }
   
   
+  // 生成二维矩阵数组
   private generateTable(firstDate: Date, clickableDate: SelectedDate): HqDate[][] {
     const date_arr = [];
     let date = firstDate.getDate(); // 26
@@ -190,8 +189,9 @@ export class DatePicker extends EventEmitter {
         firstDate.setDate(++date);  // fitstDate不断改变
         date = firstDate.getDate();
         
-        // 当月第一天和最后一天
         const currentMouth = new Date(this.yearAndMonth.y, this.yearAndMonth.m);
+  
+        // currentMouth对应的第一天和最后一天
         const currentMonthFirst = startOfMonth(currentMouth);
         const currentMonthLast = lastDayOfMonth(currentMouth);
         
@@ -210,6 +210,7 @@ export class DatePicker extends EventEmitter {
     return date_arr;
   }
   
+  // 是否禁止点击
   private isDisabled(date: Date, clickableDate: SelectedDate): boolean {
     if (!clickableDate) return false;
     //  minClickDate && compareDesc(firstDate, startOfDay(minClickDate)) === 1
@@ -221,6 +222,7 @@ export class DatePicker extends EventEmitter {
   }
   
   
+  // 是否被选中
   isActive(value: Date): boolean {
     if (!this._value) return false;
     let result: boolean;
@@ -234,7 +236,7 @@ export class DatePicker extends EventEmitter {
   }
   
   
-  // 如果是范围选择，Date[0]Date[1]之前
+  // 如果是范围选择，保证Date[0]在Date[1]之前
   private validDateRange(dateRange: [Date, Date]): [Date, Date] {
     if (!(dateRange instanceof Array)) return dateRange;
     const dateRangeCopy = <[Date, Date]>dateRange.slice();
@@ -245,7 +247,7 @@ export class DatePicker extends EventEmitter {
   }
   
   
-  
+  // 点击事件
   onPanelClick(evt: MouseEvent) {
     const dom = <HTMLElement>evt.target;
     if (dom.classList.contains('change-arrow')) {
@@ -258,16 +260,21 @@ export class DatePicker extends EventEmitter {
   
   // 选中日期
   selectDay(td: Element) {
-    // console.log(td);
     if (td.classList.contains('disabled')) return;
     const tds = this.el.querySelectorAll('td');
+    
+    // 移除所有td的actived class
     tds.forEach(item => item.classList.remove('actived'));
-    if (this.options.range) {
+    if (this.options.range) { // 如果是范围选择
       this.rangeClick(td, tds);
     }else {
       td.classList.add('actived');
       this._value = new Date(td.getAttribute('value'));
+      
+      // 发射选中事件
       this.emitEvent('onChange', this._value);
+  
+      // 发射选中事件，响应DatePicker.on方法
       this.trigger('change', this._value);
     }
   }
@@ -294,6 +301,7 @@ export class DatePicker extends EventEmitter {
     }
   }
   
+  // 切换月份
   changeMonth(dom: Element) {
     let m = this.currentDate.getMonth();
     let y = this.currentDate.getFullYear();
@@ -320,7 +328,7 @@ export class DatePicker extends EventEmitter {
     this.createMonths();
   }
   
-  // 发射选中事件
+  // 发射自定义事件
   private emitEvent(type: string, ...args: any[]) {
     if (this.options[type]) {
       this.options[type](this._value, args);
