@@ -6,6 +6,9 @@ const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 module.exports = merge(baseConfig, {
   mode: 'production',
   devtool: 'cheap-module-source-map',
+  output: {
+    filename: '[id].[contenthash:10].js'
+  },
   module: {
     rules: [{
       test: /\.less$/,
