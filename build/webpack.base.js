@@ -4,7 +4,8 @@ const { resolve } = require('path');
 module.exports = {
   entry: {
     index: './src/index.ts',
-    datepicker: './src/demos/datepicker/datepicker.ts'
+    datepicker: './src/demos/datepicker/datepicker.ts',
+    'scroll-panel': './src/demos/scroll-panel/scroll-panel.ts',
   },
   module: {
     rules: [{
@@ -14,6 +15,11 @@ module.exports = {
     }]
   },
   plugins: [
+    new HtmlWebpackPlugin({
+      title: '滚动条',
+      filename: 'demos/scroll-panel/scroll-panel.html',
+      template: resolve(__dirname, '../src/demos/scroll-panel/scroll-panel.html')
+    }),
     new HtmlWebpackPlugin({
       title: 'datepicker',
       filename: 'demos/datepicker/datepicker.html',

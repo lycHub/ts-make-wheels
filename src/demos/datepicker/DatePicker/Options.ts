@@ -18,7 +18,7 @@ export class Options {
   clickableDate: SelectedDate;
   
   // 自定义事件
-  onChange: (arg: SelectedDate) => SelectedDate;
+  onChange: (arg: SelectedDate) => void;
   onInit: () => void;
   
   
