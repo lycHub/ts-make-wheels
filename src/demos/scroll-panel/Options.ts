@@ -1,6 +1,6 @@
 // 自定义事件的函数类型，axis是拖拽的滚动条
 type EventFunc = {
-  (arg: { axis: string, scrollPoi: number } | string): void;
+  (arg: { axis?: string, scrollPoi?: number }): void;
 }
 
 export class Options {

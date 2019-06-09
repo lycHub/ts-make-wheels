@@ -25,7 +25,7 @@ window.addEventListener('DOMContentLoaded', function () {
   });
   
   datepicker.on('change', function (selectedDate: Date) {
-    // console.log('change', selectedDate);
+    console.log('on change', selectedDate);
   });
   
   const datepicker2 = new DatePicker(datepickerWrap[1], {
@@ -42,7 +42,7 @@ window.addEventListener('DOMContentLoaded', function () {
   });
   
   datepicker2.on('change', function (selectedDate: [Date, Date]) {
-    // console.log('change', selectedDate);
+    console.log('on change', selectedDate);
   });
   
 });

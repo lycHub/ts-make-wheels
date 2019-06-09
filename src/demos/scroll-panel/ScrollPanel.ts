@@ -1,6 +1,8 @@
 import { Options } from './Options.ts';
 import DomHandler from '../../tools/dom.ts';
-export default class ScrollPanel {
+import EventEmitter from "../../tools/EventEmitter.ts";
+
+export class ScrollPanel extends EventEmitter {
   readonly options: Options;
 
   // 记录滚动条y的位置
@@ -38,6 +40,7 @@ export default class ScrollPanel {
   private container: HTMLElement;
 
   constructor(el: Element | string, options?: Partial<{ [key: string]: any }>) {
+    super(['dragStart', 'dragMove', 'dragEnd']);
     this.domHandler = new DomHandler();
 
     // 合并选项
@@ -89,7 +92,6 @@ export default class ScrollPanel {
 
     // 显示长度（滑块长度） / 总长度（显示）
     this.scrollXRatio = ownWidth / totalWidth;
-    console.log('scrollXRatio', this.scrollXRatio);
     const xBar = this.panelDoms.xBarViewChild;
     xBar.style.width = (this.scrollXRatio * 100) + '%';
 
@@ -191,6 +193,8 @@ export default class ScrollPanel {
     this.isYBarClicked = true;
     this.lastPageY = this.getPoint(e);
     this.bindDocEvent();
+    this.emitEvent('onDragStart', {axis: 'y'});
+    this.trigger('dragStart', {axis: 'y'});
   }
   
   onXBarMouseDown(e: MouseEvent) {
@@ -203,6 +207,8 @@ export default class ScrollPanel {
     this.isXBarClicked = true;
     this.lastPageX = this.getPoint(e);
     this.bindDocEvent();
+    this.emitEvent('onDragStart', {axis: 'x'});
+    this.trigger('dragStart', {axis: 'y'});
   }
   
   onDocumentMouseMove(e: MouseEvent) {
@@ -226,7 +232,10 @@ export default class ScrollPanel {
       * deltaX * scrollWidth / clientWidth = scrollLeft
       * deltaX * scrollWidth = scrollLeft * clientWidth
       * */
-      this.panelDoms.contentViewChild.scrollLeft += deltaX / this.scrollXRatio;
+      const content = this.panelDoms.contentViewChild;
+      content.scrollLeft += deltaX / this.scrollXRatio;
+      this.emitEvent('onDragMove', { axis: 'x', scrollPoi: content.scrollLeft });
+      this.trigger('dragMove', { axis: 'x', scrollPoi: content.scrollLeft });
     });
   }
   
@@ -237,7 +246,10 @@ export default class ScrollPanel {
     
     this.requestAnimationFrame(() => {
       // console.log(deltaY / this.scrollYRatio);
-      this.panelDoms.contentViewChild.scrollTop += deltaY / this.scrollYRatio;
+      const content = this.panelDoms.contentViewChild;
+      content.scrollTop += deltaY / this.scrollYRatio;
+      this.emitEvent('onDragMove', { axis: 'y', scrollPoi: content.scrollTop });
+      this.trigger('dragMove', { axis: 'y', scrollPoi: content.scrollTop });
     });
   }
   
@@ -245,6 +257,8 @@ export default class ScrollPanel {
     // console.log('onDocumentMouseUp', this);
     document.removeEventListener('mousemove', this.onDocumentMouseMoveH);
     document.removeEventListener('mouseup', this.onDocumentMouseUpH);
+    this.emitEvent('onDragEnd');
+    this.trigger('dragEnd');
     this.isXBarClicked = false;
     this.isYBarClicked = false;
   }
@@ -278,5 +292,13 @@ export default class ScrollPanel {
   private requestAnimationFrame(f: Function) {
     const frame = window.requestAnimationFrame || this.timeoutFrame;
     frame(f);
+  }
+
+
+   // 发射自定义事件
+   private emitEvent(type: string, ...args: any[]) {
+    if (this.options[type]) {
+      this.options[type](args);
+    }
   }
 }
