@@ -10,7 +10,7 @@ import {
 } from 'date-fns';
 import {HqDate, SelectedDate, YearMonth} from "./definition-datepicker";
 import {Options} from "./Options.ts";
-import EventEmitter from "./EventEmitter.ts";
+import EventEmitter from "../../../EventEmitter.ts";
 
 export class DatePicker extends EventEmitter {
   private currentDate = new Date();
