@@ -6,6 +6,7 @@ module.exports = {
     index: './src/index.ts',
     datepicker: './src/demos/datepicker/datepicker.ts',
     'scroll-panel': './src/demos/scroll-panel/scroll-panel.ts',
+    'tool-tip': './src/demos/tool-tip/tool-tip.ts'
   },
   module: {
     rules: [{
@@ -15,6 +16,11 @@ module.exports = {
     }]
   },
   plugins: [
+    new HtmlWebpackPlugin({
+      title: 'Tooltip',
+      filename: 'demos/tool-tip/tool-tip.html',
+      template: resolve(__dirname, '../src/demos/tool-tip/tool-tip.html')
+    }),
     new HtmlWebpackPlugin({
       title: '滚动条',
       filename: 'demos/scroll-panel/scroll-panel.html',

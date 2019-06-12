@@ -1,12 +1,13 @@
 import './datepicker.less';
 import {DatePicker} from "./DatePicker/DatePicker.ts";
 import {addDays, subDays} from 'date-fns';
+import {SelectedDate} from "./DatePicker/definition-datepicker";
 const currentDate = new Date();
-const clickableDate = [subDays(currentDate, 2), addDays(currentDate, 28)];
-const defaultDate = addDays(currentDate, 5);
+const clickableDate: SelectedDate = [subDays(currentDate, 2), addDays(currentDate, 28)];
+const defaultDate: SelectedDate = addDays(currentDate, 5);
 
-const defaultDate2 = [currentDate, addDays(currentDate, 30)];
-const clickableDate2 = [subDays(currentDate, 2), addDays(currentDate, 58)];
+const defaultDate2: SelectedDate = [currentDate, addDays(currentDate, 30)];
+const clickableDate2: SelectedDate = [subDays(currentDate, 2), addDays(currentDate, 58)];
 
 
 window.addEventListener('DOMContentLoaded', function () {
