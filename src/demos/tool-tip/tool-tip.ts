@@ -21,7 +21,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
   const tooltip3 = new ToolTip(el[3], {
     text: 'tooltip3',
-    showDelay: 3000
+    showDelay: 2000
   });
 
   const tooltip4 = new ToolTip(el[4], {
