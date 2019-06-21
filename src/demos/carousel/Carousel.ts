@@ -1,5 +1,6 @@
 import EventEmitter from "../../tools/EventEmitter.ts";
 import {Options} from "./Options.ts";
+import animate from "animateplus";
 
 export default class Carousel extends EventEmitter {
   // 配置项
@@ -13,6 +14,12 @@ export default class Carousel extends EventEmitter {
   private readonly elWidth: number;
 
   private activeIndex = 0;
+
+  // 是否正在过度
+  private isTransiting = false;
+
+  // 定时器函数
+  private timeoutFrame: any = fn => setTimeout(fn, 0);
 
   constructor(el: HTMLElement | string, options?: Partial<Options>) {
     super(['transitionEnd']);
@@ -51,8 +58,8 @@ export default class Carousel extends EventEmitter {
     if (this.options.loop) {
       const firstNodeCopy = this.slideWrapEl.firstElementChild.cloneNode(true);
       const lastNodeCopy = this.slideWrapEl.lastElementChild.cloneNode(true);
-      this.slideWrapEl.insertBefore(firstNodeCopy, this.slideWrapEl.firstElementChild);
-      this.slideWrapEl.appendChild(lastNodeCopy);
+      this.slideWrapEl.insertBefore(lastNodeCopy, this.slideWrapEl.firstElementChild);
+      this.slideWrapEl.appendChild(firstNodeCopy);
       wrapLen += 2;
       this.slideWrapEl.style.left = -this.elWidth + 'px';
     }
@@ -76,40 +83,76 @@ export default class Carousel extends EventEmitter {
     const pagenations = this.pagenationWrapEl.children;
     const arrowLeft = this.el.querySelector('.carousel-arrow.left');
     const arrowRight = this.el.querySelector('.carousel-arrow.right');
-    arrowLeft.addEventListener('click', () => this.go(this.activeIndex - 1));
-    arrowRight.addEventListener('click', () => this.go(this.activeIndex + 1));
+    arrowLeft.addEventListener('click', () => this.go(this.elWidth));
+    arrowRight.addEventListener('click', () => this.go(-this.elWidth));
 
     for(let a = 0; a < pagenations.length; a++) {
       pagenations[a].addEventListener('click', () => this.go(a));
     }
   }
 
-  private go(index: number) {
+  private go(offset: number) {
     // const len = this.slideWrapEl.children.length;
     const len = this.slides.length;
-    /*const target = (index + len) % len;
-    console.log(target);
-    this.activeIndex = target;*/
-    if (index !== this.activeIndex) {
+    // const newLeft = Number.parseInt(this.slideWrapEl.style.left) + offset + 'px';
       if (this.options.loop) {
-
+        this.loop(offset);
       }else{
-        const target = (index + len) % len;
-        console.log('target', target);
-        this.slideWrapEl.style.left = -this.elWidth * target + 'px';
-        this.updateDots(target);
+        this.slideWrapEl.style.transition = 'left .3s';
+        this.changePoi(offset);
       }
-
-      this.activeIndex = index;
 
       // 01234
       // 0123456
+
+  }
+
+  private changePoi(offset: number) {
+    let index = offset < 0 ? this.activeIndex + 1 : this.activeIndex - 1;
+    this.activeIndex = (index + this.slides.length) % this.slides.length;
+    console.log(this.activeIndex);
+    this.slideWrapEl.style.left = -this.activeIndex * this.elWidth + 'px';
+    this.updateDots(this.activeIndex);
+  }
+
+  private loop(offset: number) {
+    if (this.isTransiting) return;
+    this.isTransiting = true;
+    let index = offset < 0 ? this.activeIndex + 1 : this.activeIndex - 1;
+    this.activeIndex = (index + this.slides.length) % this.slides.length;
+    const newLeft = this.getLeft(this.slideWrapEl) + offset;
+    const time = 300;
+    const interval = 10;
+    const speed = offset / (time / interval);
+    const that = this;
+    function go() {
+      if ((speed < 0 && that.getLeft(that.slideWrapEl) > newLeft) || (speed > 0 && that.getLeft(that.slideWrapEl) < newLeft)) {
+        that.slideWrapEl.style.left = that.getLeft(that.slideWrapEl) + speed + 'px';
+        // that.requestAnimationFrame(go);
+        setTimeout(go, interval);
+      }else {
+        // that.slideWrapEl.style.left = newLeft + 'px';
+        console.log(newLeft);
+        const len = that.slides.length;
+        if (newLeft < -(that.elWidth * (len + 1))) {
+          that.slideWrapEl.style.left = -that.elWidth + 'px';
+          that.activeIndex = 0;
+        }
+        if (newLeft > -that.elWidth) {
+          that.slideWrapEl.style.left = -that.elWidth * len + 'px';
+          that.activeIndex = len - 1;
+        }
+        that.isTransiting = false;
+      }
+      that.updateDots(that.activeIndex);
     }
+    go();
   }
 
 
   // 底部圆点
   private updateDots(index: number) {
+    // console.log(index);
     const dots = this.pagenationWrapEl.childNodes;
     for (let a = 0; a < dots.length; a++) {
       (<HTMLElement>dots[a]).classList.remove('active');
@@ -117,6 +160,16 @@ export default class Carousel extends EventEmitter {
     (<HTMLElement>dots[index]).classList.add('active');
   }
 
+
+  private getLeft(el: HTMLElement): number{
+    return Number(el.style.left.slice(0, -2));
+  }
+
+
+  private requestAnimationFrame(f: Function) {
+    const frame = window.requestAnimationFrame || this.timeoutFrame;
+    frame(f);
+  }
 
   // 发射自定义事件
   private emitEvent(type: string, ...args: any[]) {

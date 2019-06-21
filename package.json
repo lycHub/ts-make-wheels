@@ -36,6 +36,7 @@
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
+    "animateplus": "^2.1.1",
     "date-fns": "^1.30.1"
   }
 }
