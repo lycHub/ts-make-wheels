@@ -6,7 +6,8 @@ module.exports = {
     index: './src/index.ts',
     datepicker: './src/demos/datepicker/datepicker.ts',
     'scroll-panel': './src/demos/scroll-panel/scroll-panel.ts',
-    'tool-tip': './src/demos/tool-tip/tool-tip.ts'
+    'tool-tip': './src/demos/tool-tip/tool-tip.ts',
+    carousel: './src/demos/carousel/carousel-page.ts',
   },
   module: {
     rules: [{
@@ -16,6 +17,11 @@ module.exports = {
     }]
   },
   plugins: [
+    new HtmlWebpackPlugin({
+      title: 'Carousel',
+      filename: 'demos/carousel/carousel-page.html',
+      template: resolve(__dirname, '../src/demos/carousel/carousel-page.html')
+    }),
     new HtmlWebpackPlugin({
       title: 'Tooltip',
       filename: 'demos/tool-tip/tool-tip.html',
