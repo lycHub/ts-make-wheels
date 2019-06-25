@@ -4,7 +4,13 @@ export class Options {
   
   
   loop = false;
-  speed = 300;
+  
+  // 切换速度
+  speed = 0.3;
+  
+  // 自动播放间隔
+  delay = 2000;
+  
   autoplay = false;
   
   // 自定义事件

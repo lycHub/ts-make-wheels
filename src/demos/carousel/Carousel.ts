@@ -1,6 +1,5 @@
 import EventEmitter from "../../tools/EventEmitter.ts";
 import {Options} from "./Options.ts";
-import animate from "animateplus";
 
 export default class Carousel extends EventEmitter {
   // 配置项
@@ -21,6 +20,7 @@ export default class Carousel extends EventEmitter {
   // 定时器函数
   private timeoutFrame: any = fn => setTimeout(fn, 0);
 
+  private timer: number;
   constructor(el: HTMLElement | string, options?: Partial<Options>) {
     super(['transitionEnd']);
     if (!el) return;
@@ -44,9 +44,10 @@ export default class Carousel extends EventEmitter {
     const arrowRight = document.createElement('div');
     arrowRight.className = 'carousel-arrow right';
     [this.pagenationWrapEl, arrowLeft, arrowRight].forEach(item => this.el.appendChild(item));
-    this.emitEvent('onInit');
 
+    // 初始化事件
     this._initEvents();
+    this.autoPlay();
   }
 
   // 初始化分页器
@@ -56,6 +57,7 @@ export default class Carousel extends EventEmitter {
     let wrapLen = dotNum;
 
     if (this.options.loop) {
+      // 复制首尾两个slide分别放在slideWrapEl的尾首
       const firstNodeCopy = this.slideWrapEl.firstElementChild.cloneNode(true);
       const lastNodeCopy = this.slideWrapEl.lastElementChild.cloneNode(true);
       this.slideWrapEl.insertBefore(lastNodeCopy, this.slideWrapEl.firstElementChild);
@@ -83,72 +85,53 @@ export default class Carousel extends EventEmitter {
     const pagenations = this.pagenationWrapEl.children;
     const arrowLeft = this.el.querySelector('.carousel-arrow.left');
     const arrowRight = this.el.querySelector('.carousel-arrow.right');
-    arrowLeft.addEventListener('click', () => this.go(this.elWidth));
-    arrowRight.addEventListener('click', () => this.go(-this.elWidth));
+    arrowLeft.addEventListener('click', () => this.go(-1));
+    arrowRight.addEventListener('click', () => this.go(1));
 
     for(let a = 0; a < pagenations.length; a++) {
-      pagenations[a].addEventListener('click', () => this.go(a));
+      pagenations[a].addEventListener('click', () => this.navigation(a));
     }
+
+    this.slideWrapEl.addEventListener('webkitTransitionEnd', this.onTransitionEnd.bind(this));
+    this.el.addEventListener('mouseenter', this.clearInterval.bind(this));
+    this.el.addEventListener('mouseleave', this.autoPlay.bind(this));
+    this.emitEvent('onInit');
   }
 
-  private go(offset: number) {
-    // const len = this.slideWrapEl.children.length;
-    const len = this.slides.length;
-    // const newLeft = Number.parseInt(this.slideWrapEl.style.left) + offset + 'px';
-      if (this.options.loop) {
-        this.loop(offset);
-      }else{
-        this.slideWrapEl.style.transition = 'left .3s';
-        this.changePoi(offset);
-      }
-
-      // 01234
-      // 0123456
-
-  }
-
-  private changePoi(offset: number) {
-    let index = offset < 0 ? this.activeIndex + 1 : this.activeIndex - 1;
-    this.activeIndex = (index + this.slides.length) % this.slides.length;
-    console.log(this.activeIndex);
-    this.slideWrapEl.style.left = -this.activeIndex * this.elWidth + 'px';
-    this.updateDots(this.activeIndex);
-  }
-
-  private loop(offset: number) {
+  private go(dir: number) {
     if (this.isTransiting) return;
     this.isTransiting = true;
-    let index = offset < 0 ? this.activeIndex + 1 : this.activeIndex - 1;
-    this.activeIndex = (index + this.slides.length) % this.slides.length;
-    const newLeft = this.getLeft(this.slideWrapEl) + offset;
-    const time = 300;
-    const interval = 10;
-    const speed = offset / (time / interval);
-    const that = this;
-    function go() {
-      if ((speed < 0 && that.getLeft(that.slideWrapEl) > newLeft) || (speed > 0 && that.getLeft(that.slideWrapEl) < newLeft)) {
-        that.slideWrapEl.style.left = that.getLeft(that.slideWrapEl) + speed + 'px';
-        // that.requestAnimationFrame(go);
-        setTimeout(go, interval);
-      }else {
-        // that.slideWrapEl.style.left = newLeft + 'px';
-        console.log(newLeft);
-        const len = that.slides.length;
-        if (newLeft < -(that.elWidth * (len + 1))) {
-          that.slideWrapEl.style.left = -that.elWidth + 'px';
-          that.activeIndex = 0;
-        }
-        if (newLeft > -that.elWidth) {
-          that.slideWrapEl.style.left = -that.elWidth * len + 'px';
-          that.activeIndex = len - 1;
-        }
-        that.isTransiting = false;
+    this.slideWrapEl.style.transitionDuration = this.options.speed + 's';
+    const len = this.slides.length;
+    const index = dir > 0 ? this.activeIndex + 1 : this.activeIndex - 1;
+    this.activeIndex = (index + len) % len;
+      if (this.options.loop) {
+        this.loop(dir);
+      }else{
+        this.slideWrapEl.style.left = -this.activeIndex * this.elWidth + 'px';
       }
-      that.updateDots(that.activeIndex);
-    }
-    go();
+    this.updateDots(this.activeIndex);
+  }
+  
+
+  private loop(dir: number) {
+    const oldLeft = this.getLeft(this.slideWrapEl);
+    
+    // 这里可以利用下dir的正负
+    // const newLeft = dir > 0 ? oldLeft - this.elWidth : oldLeft + this.elWidth;
+    const newLeft = oldLeft + this.elWidth * -dir;
+    this.slideWrapEl.style.left = newLeft + 'px';
   }
 
+  // 点击圆点导航
+  private navigation(index: number) {
+    if (this.activeIndex !== index) {
+      this.slideWrapEl.style.transitionDuration = this.options.speed + 's';
+      this.activeIndex = index;
+      this.slideWrapEl.style.left = -(this.activeIndex + 1) * this.elWidth + 'px';
+      this.updateDots(index);
+    }
+  }
 
   // 底部圆点
   private updateDots(index: number) {
@@ -160,15 +143,43 @@ export default class Carousel extends EventEmitter {
     (<HTMLElement>dots[index]).classList.add('active');
   }
 
+  private onTransitionEnd() {
+    // console.log('end');
+    if (this.options.loop) {
+      const left = this.getLeft(this.slideWrapEl);
+      if (left >= 0) {
+        this.slideWrapEl.style.transitionDuration = '0s';
+        this.slideWrapEl.style.left = '-4000px';
+        // console.log('跳最后一个');
+      }else if (left <= -(this.slides.length + 1) * this.elWidth) {
+        this.slideWrapEl.style.transitionDuration = '0s';
+        this.slideWrapEl.style.left = '-800px';
+        // console.log('跳第一个');
+      }
+    }
+    this.isTransiting = false;
+    
+    // 发射选中事件，响应DatePicker.on方法
+    this.trigger('transitionEnd', this.activeIndex);
+    
+    this.emitEvent('onTransitionEnd', this.activeIndex);
+  }
+  
+  private autoPlay() {
+    if (this.options.autoplay) {
+      this.timer = setInterval(() => this.go(1), this.options.delay);
+    }
+  }
+  
+  private clearInterval() {
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+  }
 
   private getLeft(el: HTMLElement): number{
     return Number(el.style.left.slice(0, -2));
-  }
-
-
-  private requestAnimationFrame(f: Function) {
-    const frame = window.requestAnimationFrame || this.timeoutFrame;
-    frame(f);
   }
 
   // 发射自定义事件
