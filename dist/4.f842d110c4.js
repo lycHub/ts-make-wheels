@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 167);
+/******/ 	return __webpack_require__(__webpack_require__.s = 170);
 /******/ })
 /************************************************************************/
 /******/ ({
@@ -177,7 +177,7 @@ var DomHandler = /** @class */ (function () {
 
 /***/ }),
 
-/***/ 167:
+/***/ 170:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -252,6 +252,7 @@ var Tooltip_ToolTip = /** @class */ (function () {
             this.hideTimeout = setTimeout(function () { return _this.hide(); }, duration);
         }
     };
+    // 显示
     ToolTip.prototype.show = function () {
         if (!this.options.text)
             return;
@@ -260,6 +261,7 @@ var Tooltip_ToolTip = /** @class */ (function () {
         this.domHandler.fadeIn(this.container, 250);
         this.bindDocumentResizeListener();
     };
+    // 隐藏
     ToolTip.prototype.hide = function () {
         if (this.container && this.container.parentElement) {
             if (this.options.appendTo === 'body') {
@@ -288,6 +290,7 @@ var Tooltip_ToolTip = /** @class */ (function () {
     ToolTip.prototype.onWindowResize = function () {
         this.hide();
     };
+    // 各方向居中对齐
     ToolTip.prototype.align = function () {
         switch (this.options.postion) {
             case 'top':
@@ -318,9 +321,7 @@ var Tooltip_ToolTip = /** @class */ (function () {
         if (!this.container)
             return;
         var hostOffset = this.getHostOffset();
-        // 相对宿主居中
         var left = hostOffset.left + (this.hostEl.offsetWidth - this.container.offsetWidth) / 2;
-        // console.log('left', left);
         var top = hostOffset.top + this.hostEl.offsetHeight + 6;
         this.container.style.left = left + 'px';
         this.container.style.top = top + 'px';
@@ -329,7 +330,6 @@ var Tooltip_ToolTip = /** @class */ (function () {
         if (!this.container)
             return;
         var hostOffset = this.getHostOffset();
-        // 相对宿主居中
         var left = hostOffset.left - this.container.offsetWidth - 6;
         var top = hostOffset.top + (this.hostEl.offsetHeight - this.container.offsetHeight) / 2;
         this.container.style.left = left + 'px';
@@ -339,7 +339,6 @@ var Tooltip_ToolTip = /** @class */ (function () {
         if (!this.container)
             return;
         var hostOffset = this.getHostOffset();
-        // 相对宿主居中
         var left = hostOffset.left + this.hostEl.offsetWidth + 6;
         var top = hostOffset.top + (this.hostEl.offsetHeight - this.container.offsetHeight) / 2;
         this.container.style.left = left + 'px';
@@ -452,4 +451,4 @@ window.addEventListener('DOMContentLoaded', function () {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=tool-tip.js.map
+//# sourceMappingURL=4.f842d110c4.js.map

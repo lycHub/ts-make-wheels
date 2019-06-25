@@ -215,7 +215,7 @@ var Options = /** @class */ (function () {
 var dom = __webpack_require__(10);
 
 // EXTERNAL MODULE: ./src/tools/EventEmitter.ts
-var EventEmitter = __webpack_require__(9);
+var EventEmitter = __webpack_require__(2);
 
 // CONCATENATED MODULE: ./src/demos/scroll-panel/ScrollPanel.ts
 var __extends = (undefined && undefined.__extends) || (function () {
@@ -499,7 +499,7 @@ window.addEventListener('DOMContentLoaded', function () {
 
 /***/ }),
 
-/***/ 9:
+/***/ 2:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -548,4 +548,4 @@ var EventEmitter = /** @class */ (function () {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=scroll-panel.js.map
+//# sourceMappingURL=3.d73e85ff7f.js.map

@@ -6,10 +6,14 @@ export default class Carousel extends EventEmitter {
   private readonly options: Options;
 
 
+  // 容器
   private readonly el: HTMLElement;
-  private pagenationWrapEl: HTMLElement;
   private slideWrapEl: HTMLElement;
+  
+  private pagenationWrapEl: HTMLElement;
   private slides: NodeListOf<Element>;
+  
+  // 容器宽度
   private readonly elWidth: number;
 
   private activeIndex = 0;
@@ -17,10 +21,7 @@ export default class Carousel extends EventEmitter {
   // 是否正在过度
   private isTransiting = false;
 
-  // 定时器函数
-  private timeoutFrame: any = fn => setTimeout(fn, 0);
-
-  private timer: number;
+  private timer: any;
   constructor(el: HTMLElement | string, options?: Partial<Options>) {
     super(['transitionEnd']);
     if (!el) return;
