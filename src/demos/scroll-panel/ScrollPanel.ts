@@ -39,7 +39,7 @@ export class ScrollPanel extends EventEmitter {
 
   private container: HTMLElement;
 
-  constructor(el: Element | string, options?: Partial<{ [key: string]: any }>) {
+  constructor(el: Element | string, options?: Partial<Options>) {
     super(['dragStart', 'dragMove', 'dragEnd']);
     this.domHandler = new DomHandler();
 
