@@ -35,6 +35,7 @@ export default class ToolTip {
     this._initEvents();
   }
 
+
   private _initEvents() {
     if (this.options.tooltipEvent === 'hover') {
       this.mouseEnterListener = this.onMouseEnter.bind(this);
@@ -64,6 +65,7 @@ export default class ToolTip {
   }
 
 
+  // 显示
   private show() {
     if (!this.options.text) return;
 
@@ -72,6 +74,8 @@ export default class ToolTip {
     this.domHandler.fadeIn(this.container, 250);
     this.bindDocumentResizeListener();
   }
+
+  // 隐藏
   private hide() {
     if (this.container && this.container.parentElement) {
       if (this.options.appendTo === 'body') {
@@ -105,6 +109,7 @@ export default class ToolTip {
   }
 
 
+  // 各方向居中对齐
   private align() {
     switch (this.options.postion) {
       case 'top':
@@ -139,10 +144,7 @@ export default class ToolTip {
   private alignBottom() {
     if (!this.container) return;
     const hostOffset = this.getHostOffset();
-
-    // 相对宿主居中
     const left = hostOffset.left + (this.hostEl.offsetWidth - this.container.offsetWidth) / 2;
-    // console.log('left', left);
     const top = hostOffset.top + this.hostEl.offsetHeight + 6;
     this.container.style.left = left + 'px';
     this.container.style.top = top + 'px';
@@ -151,8 +153,6 @@ export default class ToolTip {
   private alignLeft() {
     if (!this.container) return;
     const hostOffset = this.getHostOffset();
-
-    // 相对宿主居中
     const left = hostOffset.left - this.container.offsetWidth - 6;
     const top = hostOffset.top +  (this.hostEl.offsetHeight - this.container.offsetHeight) / 2;
     this.container.style.left = left + 'px';
@@ -162,8 +162,6 @@ export default class ToolTip {
   private alignRight() {
     if (!this.container) return;
     const hostOffset = this.getHostOffset();
-
-    // 相对宿主居中
     const left = hostOffset.left + this.hostEl.offsetWidth + 6;
     const top = hostOffset.top +  (this.hostEl.offsetHeight - this.container.offsetHeight) / 2;
     this.container.style.left = left + 'px';
