@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Slider</title>
+  <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"><link href="../../index.css" rel="stylesheet"><link href="../../datepicker.css" rel="stylesheet"><link href="../../scroll-panel.css" rel="stylesheet"><link href="../../tool-tip.css" rel="stylesheet"><link href="../../carousel.css" rel="stylesheet"><link href="../../slider.css" rel="stylesheet"></head>
+</head>
+<body>
+  <div class="container">
+    <div class="sec">
+      <b></b>
+      <div class="box">
+        <!--<div class="v-slider-wrap">
+          &lt;!&ndash; 色条 &ndash;&gt;
+          <div class="v-slider-bar"></div>
+
+          &lt;!&ndash; 断点 &ndash;&gt;
+          &lt;!&ndash;<div class="dot"></div>&ndash;&gt;
+
+          &lt;!&ndash; 色块 &ndash;&gt;
+          <div class="v-slider-button-wrap">
+            <div class="v-slider-button"></div>
+          </div>
+
+          &lt;!&ndash;<div class="v-slider-button-wrap">
+            <div class="v-slider-button"></div>
+          </div>&ndash;&gt;
+        </div>-->
+      </div>
+      <b></b>
+    </div>
+
+    <div class="sec">
+      <b></b>
+      <div class="box"></div>
+      <b></b>
+    </div>
+
+    <div class="sec">
+      <b></b>
+      <div class="box"></div>
+      <b></b>
+    </div>
+
+    <div class="code">
+      <p>调用</p>
+      <textarea rows="20" cols="80" readonly>
+      const secs = document.getElementsByClassName('sec');
+  const boxes = document.getElementsByClassName('box');
+  const slider = new Slider(<HTMLElement>boxes[0], {
+    value: [10, 90],
+    range: true,
+    onInit(val: SliderVal) {
+      const b = secs[0].getElementsByTagName('b');
+      b[0].innerText = val[0];
+      b[1].innerText = val[1];
+    }
+  });
+
+  slider.on('changing', function (val: SliderVal) {
+    const b = secs[0].getElementsByTagName('b');
+    b[0].innerText = val[0];
+    b[1].innerText = val[1];
+  });
+
+
+
+  const slider2 = new Slider(<HTMLElement>boxes[1], {
+    value: [10, 90],
+    range: true,
+    step: 10,
+    showDots: true,
+    onInit(val: SliderVal) {
+      const b = secs[1].getElementsByTagName('b');
+      b[0].innerText = val[0];
+      b[1].innerText = val[1];
+    }
+  });
+
+  slider2.on('change', function (val: SliderVal) {
+    const b = secs[1].getElementsByTagName('b');
+    b[0].innerText = val[0];
+    b[1].innerText = val[1];
+  });
+
+
+  const slider3 = new Slider(<HTMLElement>boxes[2], {
+    value: [2, 7],
+    range: true,
+    min: 1,
+    max: 10,
+    onInit(val: SliderVal) {
+      const b = secs[2].getElementsByTagName('b');
+      b[0].innerText = val[0];
+      b[1].innerText = val[1];
+    }
+  });
+
+  slider3.on('changing', function (val: SliderVal) {
+    const b = secs[2].getElementsByTagName('b');
+    b[0].innerText = val[0];
+    b[1].innerText = val[1];
+  });
+    </textarea>
+    </div>
+  </div>
+
+<script src="https://cdn.bootcss.com/jquery/3.2.1/jquery.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+<script src="https://cdn.bootcss.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+<script type="text/javascript" src="../../2.815c3d3156.js"></script><script type="text/javascript" src="../../6.622718148a.js"></script><script type="text/javascript" src="../../1.ee9d898642.js"></script><script type="text/javascript" src="../../3.a56045f546.js"></script><script type="text/javascript" src="../../5.453db34c3f.js"></script><script type="text/javascript" src="../../0.081c414caf.js"></script><script type="text/javascript" src="../../4.c5124efccd.js"></script></body>
+</html>

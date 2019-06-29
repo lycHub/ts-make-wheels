@@ -81,94 +81,10 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 170);
+/******/ 	return __webpack_require__(__webpack_require__.s = 169);
 /******/ })
 /************************************************************************/
 /******/ ({
-
-/***/ 10:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var DomHandler = /** @class */ (function () {
-    function DomHandler() {
-    }
-    DomHandler.prototype.addClass = function (element, className) {
-        if (element.classList)
-            element.classList.add(className);
-        else
-            element.className += ' ' + className;
-    };
-    DomHandler.prototype.addMultipleClasses = function (element, className) {
-        if (element.classList) {
-            var styles = className.split(' ');
-            for (var i = 0; i < styles.length; i++) {
-                element.classList.add(styles[i]);
-            }
-        }
-        else {
-            var styles = className.split(' ');
-            for (var i = 0; i < styles.length; i++) {
-                element.className += ' ' + styles[i];
-            }
-        }
-    };
-    DomHandler.prototype.removeClass = function (element, className) {
-        if (element.classList)
-            element.classList.remove(className);
-        else
-            element.className = element.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
-    };
-    DomHandler.prototype.hasClass = function (element, className) {
-        if (element.classList)
-            return element.classList.contains(className);
-        else
-            return new RegExp('(^| )' + className + '( |$)', 'gi').test(element.className);
-    };
-    DomHandler.prototype.appendChild = function (element, target) {
-        target.appendChild(element);
-    };
-    DomHandler.prototype.removeChild = function (element, target) {
-        target.removeChild(element);
-    };
-    DomHandler.prototype.getWindowScrollTop = function () {
-        var doc = document.documentElement;
-        // clientTop上边框距离
-        return (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
-    };
-    DomHandler.prototype.getWindowScrollLeft = function () {
-        var doc = document.documentElement;
-        return (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
-    };
-    DomHandler.prototype.fadeIn = function (element, duration) {
-        element.style.opacity = '0';
-        var last = +new Date();
-        var opacity = 0;
-        var tick = function () {
-            // opacity = +element.style.opacity.replace(",", ".") + (new Date().getTime() - last) / duration;
-            opacity = +element.style.opacity + (new Date().getTime() - last) / duration;
-            element.style.opacity = opacity.toString();
-            last = +new Date();
-            if (opacity < 1) {
-                (window.requestAnimationFrame && requestAnimationFrame(tick)) || setTimeout(tick, 16);
-            }
-        };
-        tick();
-    };
-    DomHandler.prototype.getOuterWidth = function (el, margin) {
-        var width = el.offsetWidth;
-        if (margin) {
-            var style = getComputedStyle(el);
-            width += parseFloat(style.marginLeft) + parseFloat(style.marginRight);
-        }
-        return width;
-    };
-    return DomHandler;
-}());
-/* harmony default export */ __webpack_exports__["a"] = (DomHandler);
-
-
-/***/ }),
 
 /***/ 166:
 /***/ (function(module, exports, __webpack_require__) {
@@ -177,7 +93,7 @@ var DomHandler = /** @class */ (function () {
 
 /***/ }),
 
-/***/ 170:
+/***/ 169:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -208,7 +124,7 @@ var Options = /** @class */ (function () {
 
 
 // EXTERNAL MODULE: ./src/tools/dom.ts
-var dom = __webpack_require__(10);
+var dom = __webpack_require__(3);
 
 // CONCATENATED MODULE: ./src/demos/tool-tip/Tooltip.ts
 
@@ -448,7 +364,121 @@ window.addEventListener('DOMContentLoaded', function () {
 });
 
 
+/***/ }),
+
+/***/ 3:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var DomHandler = /** @class */ (function () {
+    function DomHandler() {
+    }
+    DomHandler.prototype.addClass = function (element, className) {
+        if (element.classList)
+            element.classList.add(className);
+        else
+            element.className += ' ' + className;
+    };
+    DomHandler.prototype.addMultipleClasses = function (element, className) {
+        if (element.classList) {
+            var styles = className.split(' ');
+            for (var i = 0; i < styles.length; i++) {
+                element.classList.add(styles[i]);
+            }
+        }
+        else {
+            var styles = className.split(' ');
+            for (var i = 0; i < styles.length; i++) {
+                element.className += ' ' + styles[i];
+            }
+        }
+    };
+    DomHandler.prototype.removeClass = function (element, className) {
+        if (element.classList)
+            element.classList.remove(className);
+        else
+            element.className = element.className.replace(new RegExp('(^|\\b)' + className.split(' ').join('|') + '(\\b|$)', 'gi'), ' ');
+    };
+    DomHandler.prototype.hasClass = function (element, className) {
+        if (element.classList)
+            return element.classList.contains(className);
+        else
+            return new RegExp('(^| )' + className + '( |$)', 'gi').test(element.className);
+    };
+    DomHandler.prototype.appendChild = function (element, target) {
+        target.appendChild(element);
+    };
+    DomHandler.prototype.removeChild = function (element, target) {
+        target.removeChild(element);
+    };
+    DomHandler.prototype.getWindowScrollTop = function () {
+        var doc = document.documentElement;
+        // clientTop上边框距离
+        return (window.pageYOffset || doc.scrollTop) - (doc.clientTop || 0);
+    };
+    DomHandler.prototype.getWindowScrollLeft = function () {
+        var doc = document.documentElement;
+        return (window.pageXOffset || doc.scrollLeft) - (doc.clientLeft || 0);
+    };
+    DomHandler.prototype.fadeIn = function (element, duration) {
+        element.style.opacity = '0';
+        var last = +new Date();
+        var opacity = 0;
+        var tick = function () {
+            // opacity = +element.style.opacity.replace(",", ".") + (new Date().getTime() - last) / duration;
+            opacity = +element.style.opacity + (new Date().getTime() - last) / duration;
+            element.style.opacity = opacity.toString();
+            last = +new Date();
+            if (opacity < 1) {
+                (window.requestAnimationFrame && requestAnimationFrame(tick)) || setTimeout(tick, 16);
+            }
+        };
+        tick();
+    };
+    DomHandler.prototype.getOuterWidth = function (el, margin) {
+        var width = el.offsetWidth;
+        if (margin) {
+            var style = getComputedStyle(el);
+            width += parseFloat(style.marginLeft) + parseFloat(style.marginRight);
+        }
+        return width;
+    };
+    DomHandler.prototype.addEvents = function (target, obj) {
+        for (var attr in obj) {
+            target.addEventListener(attr, obj[attr]);
+        }
+    };
+    DomHandler.prototype.removeEvents = function (target, obj) {
+        for (var attr in obj) {
+            target.removeEventListener(attr, obj[attr]);
+        }
+    };
+    DomHandler.prototype.getStyle = function (element, styleName) {
+        if (!element || !styleName)
+            return null;
+        styleName = camelCase(styleName);
+        if (styleName === 'float') {
+            styleName = 'cssFloat';
+        }
+        try {
+            var computed = document.defaultView.getComputedStyle(element, '');
+            return element.style[styleName] || computed ? computed[styleName] : null;
+        }
+        catch (e) {
+            return element.style[styleName];
+        }
+    };
+    return DomHandler;
+}());
+/* harmony default export */ __webpack_exports__["a"] = (DomHandler);
+function camelCase(name) {
+    return name.replace(/([\:\-\_]+(.))/g, function (_, separator, letter, offset) {
+        return offset ? letter.toUpperCase() : letter;
+    }).replace(/^moz([A-Z])/, 'Moz$1');
+}
+
+
 /***/ })
 
 /******/ });
-//# sourceMappingURL=4.f842d110c4.js.map
+//# sourceMappingURL=5.453db34c3f.js.map
