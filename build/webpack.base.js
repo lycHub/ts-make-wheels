@@ -9,15 +9,24 @@ module.exports = {
     'tool-tip': './src/demos/tool-tip/tool-tip.ts',
     carousel: './src/demos/carousel/carousel-page.ts',
     slider: './src/demos/slider/slider-page.ts',
+    'color-picker': './src/demos/color-picker/color-picker.ts',
   },
   module: {
     rules: [{
       test: /\.ts$/,
       use: 'ts-loader',
       exclude: /node_modules/
+    }, {
+      test: /\.(gif|jpg|jpeg|png|svg)$/,
+      use: 'url-loader'
     }]
   },
   plugins: [
+    new HtmlWebpackPlugin({
+      title: '取色器',
+      filename: 'demos/color-picker/color-picker.html',
+      template: resolve(__dirname, '../src/demos/color-picker/color-picker.html')
+    }),
     new HtmlWebpackPlugin({
       title: 'Slider',
       filename: 'demos/slider/slider-page.html',
