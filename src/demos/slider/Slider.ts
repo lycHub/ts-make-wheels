@@ -1,5 +1,5 @@
 import EventEmitter from "../../tools/EventEmitter.ts";
-import {Options, SliderVal} from "./Options.ts";
+import {Options} from "./Options.ts";
 import DomHandler from "../../tools/dom.ts";
 
 type EventType = MouseEvent | TouchEvent;
@@ -56,6 +56,7 @@ export default class Slider extends EventEmitter {
     // 合并选项
     this.options = new Options().merge(options);
 
+    // 赋初始值
     const initVal = this.options.value;
     this.currentValue = initVal ? this.checkLimits(Array.isArray(initVal) ? initVal : [initVal]) : this.checkLimits([0]);
 
@@ -68,14 +69,15 @@ export default class Slider extends EventEmitter {
 
     let dots = '';
     if (this.options.showDots) {
-      // 获取圆点
+      // 获取断点
       const dotsArr = this.getDots();
       dotsArr.forEach(dot => {
         const className = dot.active ? 'v-slider-dot active' : 'v-slider-dot';
         dots += `<div class="${className}" style="left: ${dot.val}%"></div>`;
       });
     }
-    // console.log(dots);
+    
+    // 渲染dom
     const maxBtnClass = this.options.range ? 'v-slider-button-wrap' : 'v-slider-button-wrap hide';
     this.el.innerHTML = `<div class="v-slider-wrap">
         <!-- 色条 -->
@@ -99,6 +101,8 @@ export default class Slider extends EventEmitter {
     this.btns = this.el.getElementsByClassName('v-slider-button-wrap');
     this.sliderWidth = this.domHandle.getOuterWidth(this.el.querySelector('.v-slider-wrap'));
     this.initEvents();
+    
+    // 初始化滑块和色条的位置
     this.changeButtonPosition();
     this.changeBarStyle();
     const value = this.options.range ? this.exportValue : this.exportValue[0];
@@ -112,7 +116,7 @@ export default class Slider extends EventEmitter {
     }
   }
 
-  // 计算圆点个数和位置
+  // 计算断点个数和位置
   private getDots(): { val: number, active: boolean }[] {
     const dotCount = this.valueRange / this.options.step;
     const dots = [];
@@ -186,7 +190,6 @@ export default class Slider extends EventEmitter {
     }
 //      console.log('newVal :', newVal);
 
-    // const modulus = this.handleDecimal(newVal, this.options.step);
     const modulus = newVal % this.options.step;
     let value = this.currentValue;
 
@@ -214,11 +217,6 @@ export default class Slider extends EventEmitter {
   // 保证currentValue的大小关系
   private checkValue(value: number[]): number[] {
     const val = value.slice();
-    /*if (index === 0 && val[index] > val[1]) {
-      val[1] = val[index];
-    }else if (index === 1 && val[index] < val[0]) {
-      val[0] = val[index];
-    }*/
     if (val[0] > val[1]) {
       [val[0], val[1]] = [val[1], val[0]];
     }
@@ -253,6 +251,7 @@ export default class Slider extends EventEmitter {
     return style;
   }
 
+  // 改变断点样式
   private changeDotStyle() {
     const dots = this.el.querySelectorAll('.v-slider-dot');
     const barStyle = this.changeBarStyle();
@@ -260,7 +259,7 @@ export default class Slider extends EventEmitter {
     for (let i = 0; i < dots.length; i++) {
       // 每个dot的left值， +4是因为每个dot都设置了margin-left: 4px。
       // 也可以直接用getComputedStyle获取
-      // console.log(this.domHandle.getStyle(dots[i], 'left'));
+      // console.log(this.domHandle.getStyle(dots[i], 'left').slice(0, -2));
       const left = (((<HTMLElement>dots[i]).offsetLeft + 4) / this.sliderWidth) * 100;
       const active = this.isDotActive(left, barStyle);
       if (active) {
@@ -278,23 +277,6 @@ export default class Slider extends EventEmitter {
   }
 
 
-  /*private handleDecimal(pos, step) {
-    if (step < 1) {
-      let sl = step.toString(),
-        multiple = 1,
-        m;
-      try {
-        m = sl.split(".")[1].length;
-      } catch (e) {
-        m = 0;
-      }
-
-      multiple = Math.pow(10, m);
-      return ((pos * multiple) % (step * multiple)) / multiple;
-    } else {
-      return pos % step;
-    }
-  }*/
 
   private getPointer(event) {
     return event.type.indexOf("touch") !== -1 ? event.touches[0].clientX : event.clientX;
