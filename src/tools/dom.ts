@@ -85,4 +85,26 @@ export default class DomHandler {
 
     return width;
   }
+
+  getStyle (element, styleName) {
+    if (!element || !styleName) return null;
+    styleName = camelCase(styleName);
+    if (styleName === 'float') {
+      styleName = 'cssFloat';
+    }
+    try {
+      const computed = document.defaultView.getComputedStyle(element, '');
+      return element.style[styleName] || computed ? computed[styleName] : null;
+    } catch(e) {
+      return element.style[styleName];
+    }
+  }
+}
+
+
+
+function camelCase(name) {
+  return name.replace(/([\:\-\_]+(.))/g, function(_, separator, letter, offset) {
+    return offset ? letter.toUpperCase() : letter;
+  }).replace(/^moz([A-Z])/, 'Moz$1');
 }

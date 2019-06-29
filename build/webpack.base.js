@@ -8,6 +8,7 @@ module.exports = {
     'scroll-panel': './src/demos/scroll-panel/scroll-panel.ts',
     'tool-tip': './src/demos/tool-tip/tool-tip.ts',
     carousel: './src/demos/carousel/carousel-page.ts',
+    slider: './src/demos/slider/slider-page.ts',
   },
   module: {
     rules: [{
@@ -17,6 +18,11 @@ module.exports = {
     }]
   },
   plugins: [
+    new HtmlWebpackPlugin({
+      title: 'Slider',
+      filename: 'demos/slider/slider-page.html',
+      template: resolve(__dirname, '../src/demos/slider/slider-page.html')
+    }),
     new HtmlWebpackPlugin({
       title: 'Carousel',
       filename: 'demos/carousel/carousel-page.html',
