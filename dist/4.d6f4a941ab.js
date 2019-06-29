@@ -171,6 +171,7 @@ var Slider_Slider = /** @class */ (function (_super) {
         _this.el = (typeof el === 'string' ? document.querySelector(el) : el);
         // 合并选项
         _this.options = new Options().merge(options);
+        // 赋初始值
         var initVal = _this.options.value;
         _this.currentValue = initVal ? _this.checkLimits(Array.isArray(initVal) ? initVal : [initVal]) : _this.checkLimits([0]);
         _this.init();
@@ -181,32 +182,37 @@ var Slider_Slider = /** @class */ (function (_super) {
         this.valueRange = this.options.max - this.options.min;
         var dots = '';
         if (this.options.showDots) {
-            // 获取圆点
+            // 获取断点
             var dotsArr = this.getDots();
             dotsArr.forEach(function (dot) {
                 var className = dot.active ? 'v-slider-dot active' : 'v-slider-dot';
                 dots += "<div class=\"" + className + "\" style=\"left: " + dot.val + "%\"></div>";
             });
         }
-        // console.log(dots);
+        // 渲染dom
         var maxBtnClass = this.options.range ? 'v-slider-button-wrap' : 'v-slider-button-wrap hide';
         this.el.innerHTML = "<div class=\"v-slider-wrap\">\n        <!-- \u8272\u6761 -->\n        <div class=\"v-slider-bar\"></div>\n\n        <!-- \u65AD\u70B9 -->\n        " + dots + "\n\n        <!-- \u8272\u5757 -->\n        <div class=\"v-slider-button-wrap\" data-type=\"min\">\n          <div class=\"v-slider-button\"></div>\n        </div>\n\n        <div class=\"" + maxBtnClass + "\" data-type=\"max\">\n          <div class=\"v-slider-button\"></div>\n        </div>\n      </div>";
         this.bar = this.el.querySelector('.v-slider-bar');
         this.btns = this.el.getElementsByClassName('v-slider-button-wrap');
+        this.dots = this.el.querySelectorAll('.v-slider-dot');
         this.sliderWidth = this.domHandle.getOuterWidth(this.el.querySelector('.v-slider-wrap'));
         this.initEvents();
+        // 初始化滑块和色条的位置
         this.changeButtonPosition();
         this.changeBarStyle();
         var value = this.options.range ? this.exportValue : this.exportValue[0];
         this.emitEvent('onInit', value);
     };
     Slider.prototype.initEvents = function () {
+        this.el.addEventListener('click', this.sliderClick.bind(this));
+        this.bar.addEventListener('click', this.sliderClick.bind(this));
         for (var a = 0; a < this.btns.length; a++) {
             this.btns[a].addEventListener('mousedown', this.handleStart.bind(this));
             this.btns[a].addEventListener('touchstart', this.handleStart.bind(this));
+            this.btns[a].addEventListener('click', this.sliderClick.bind(this));
         }
     };
-    // 计算圆点个数和位置
+    // 计算断点个数和位置
     Slider.prototype.getDots = function () {
         var dotCount = this.valueRange / this.options.step;
         var dots = [];
@@ -219,6 +225,24 @@ var Slider_Slider = /** @class */ (function (_super) {
             dots.push({ val: val, active: active });
         }
         return dots;
+    };
+    // 点击slider
+    Slider.prototype.sliderClick = function (event) {
+        var current = this.getPointer(event);
+        var sliderOffsetLeft = this.el.getBoundingClientRect().left;
+        // 新值
+        var newVal = ((current - sliderOffsetLeft) / this.sliderWidth) * this.valueRange + this.options.min;
+        // console.log('newPos :', newPos);
+        var _a = this.btnPosition, minBtnPoi = _a.minBtnPoi, maxBtnPoi = _a.maxBtnPoi;
+        if (!this.options.range || newVal <= minBtnPoi) {
+            this.changeVal(newVal, "min");
+        }
+        else if (newVal >= maxBtnPoi) {
+            this.changeVal(newVal, "max");
+        }
+        else {
+            this.changeVal(newVal, newVal - this.currentValue[0] <= this.currentValue[1] - newVal ? "min" : "max");
+        }
     };
     // 滑块按下
     Slider.prototype.handleStart = function (event) {
@@ -270,7 +294,6 @@ var Slider_Slider = /** @class */ (function (_super) {
             newVal = this.checkLimits([this.options.min, newVal])[1];
         }
         //      console.log('newVal :', newVal);
-        // const modulus = this.handleDecimal(newVal, this.options.step);
         var modulus = newVal % this.options.step;
         var value = this.currentValue;
         // 当accordingToStep === true时，newVal - modulus保证是整数
@@ -294,22 +317,16 @@ var Slider_Slider = /** @class */ (function (_super) {
     Slider.prototype.checkValue = function (value) {
         var _a;
         var val = value.slice();
-        /*if (index === 0 && val[index] > val[1]) {
-          val[1] = val[index];
-        }else if (index === 1 && val[index] < val[0]) {
-          val[0] = val[index];
-        }*/
         if (val[0] > val[1]) {
             _a = [val[1], val[0]], val[0] = _a[0], val[1] = _a[1];
         }
         return val;
     };
-    // 根据值改变按钮位置
+    // 根据当前值改变按钮位置
     Slider.prototype.changeButtonPosition = function () {
         var val = this.currentValue;
         // (当前位置 / 100) = (当前数值 - 最小数值) / 数值范围
-        var minBtnPoi = ((val[0] - this.options.min) / this.valueRange) * 100; // 左滑块
-        var maxBtnPoi = ((val[1] - this.options.min) / this.valueRange) * 100; // 右滑块
+        var _a = this.btnPosition, minBtnPoi = _a.minBtnPoi, maxBtnPoi = _a.maxBtnPoi;
         this.btns[0].style.left = minBtnPoi + '%';
         if (this.btns[1]) {
             this.btns[1].style.left = maxBtnPoi + '%';
@@ -331,20 +348,21 @@ var Slider_Slider = /** @class */ (function (_super) {
         }
         return style;
     };
+    // 改变断点样式
     Slider.prototype.changeDotStyle = function () {
-        var dots = this.el.querySelectorAll('.v-slider-dot');
+        this.dots = this.el.querySelectorAll('.v-slider-dot');
         var barStyle = this.changeBarStyle();
-        for (var i = 0; i < dots.length; i++) {
+        for (var i = 0; i < this.dots.length; i++) {
             // 每个dot的left值， +4是因为每个dot都设置了margin-left: 4px。
             // 也可以直接用getComputedStyle获取
-            // console.log(this.domHandle.getStyle(dots[i], 'left'));
-            var left = ((dots[i].offsetLeft + 4) / this.sliderWidth) * 100;
+            // console.log(this.domHandle.getStyle(dots[i], 'left').slice(0, -2));
+            var left = ((this.dots[i].offsetLeft + 4) / this.sliderWidth) * 100;
             var active = this.isDotActive(left, barStyle);
             if (active) {
-                dots[i].classList.add('active');
+                this.dots[i].classList.add('active');
             }
             else {
-                dots[i].classList.remove('active');
+                this.dots[i].classList.remove('active');
             }
         }
     };
@@ -353,23 +371,6 @@ var Slider_Slider = /** @class */ (function (_super) {
             ? left > barStyle.left && left < barStyle.left + barStyle.width
             : left < barStyle.width;
     };
-    /*private handleDecimal(pos, step) {
-      if (step < 1) {
-        let sl = step.toString(),
-          multiple = 1,
-          m;
-        try {
-          m = sl.split(".")[1].length;
-        } catch (e) {
-          m = 0;
-        }
-  
-        multiple = Math.pow(10, m);
-        return ((pos * multiple) % (step * multiple)) / multiple;
-      } else {
-        return pos % step;
-      }
-    }*/
     Slider.prototype.getPointer = function (event) {
         return event.type.indexOf("touch") !== -1 ? event.touches[0].clientX : event.clientX;
     };
@@ -398,6 +399,18 @@ var Slider_Slider = /** @class */ (function (_super) {
             // step是小数就等于1，否则等于0
             var decimalCases = (String(this.options.step).split(".")[1] || "").length;
             return this.currentValue.map(function (nr) { return Number(nr.toFixed(decimalCases)); });
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Slider.prototype, "btnPosition", {
+        // 获取左右滑块的位置
+        get: function () {
+            var val = this.currentValue;
+            // (当前位置 / 100) = (当前数值 - 最小数值) / 数值范围
+            var minBtnPoi = ((val[0] - this.options.min) / this.valueRange) * 100; // 左滑块
+            var maxBtnPoi = ((val[1] - this.options.min) / this.valueRange) * 100; // 右滑块
+            return { minBtnPoi: minBtnPoi, maxBtnPoi: maxBtnPoi };
         },
         enumerable: true,
         configurable: true
@@ -627,4 +640,4 @@ function camelCase(name) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=4.c5124efccd.js.map
+//# sourceMappingURL=4.d6f4a941ab.js.map
