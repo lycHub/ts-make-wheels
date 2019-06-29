@@ -4,10 +4,6 @@ export class Options {
   // 可索引类型，该类下的所有属性的key必须是字符串，值为any
   [key: string]: any;
 
-
-  // 是否显示原地，需要step > 1
-  showDots = false;
-
   step = 1;
 
   // 当设置了step时，是否按照step移动
@@ -23,11 +19,14 @@ export class Options {
 
   // 是否双滑块
   range = false;
+
+  // 是否显示断点
+  showDots = false;
   
   // 自定义事件
   onChanging: (value: SliderVal) => void;
   onChange: (value: SliderVal) => void;
-  onInit: () => void;
+  onInit: (value: SliderVal) => void;
   
   
   // 合并默认配置

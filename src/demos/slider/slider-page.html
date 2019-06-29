@@ -9,23 +9,101 @@
 </head>
 <body>
   <div class="container">
-    <div class="box">
-      <!--<div class="v-slider-wrap">
-        &lt;!&ndash; 色条 &ndash;&gt;
-        <div class="v-slider-bar"></div>
+    <div class="sec">
+      <b></b>
+      <div class="box">
+        <!--<div class="v-slider-wrap">
+          &lt;!&ndash; 色条 &ndash;&gt;
+          <div class="v-slider-bar"></div>
 
-        &lt;!&ndash; 断点 &ndash;&gt;
-        &lt;!&ndash;<div class="dot"></div>&ndash;&gt;
+          &lt;!&ndash; 断点 &ndash;&gt;
+          &lt;!&ndash;<div class="dot"></div>&ndash;&gt;
 
-        &lt;!&ndash; 色块 &ndash;&gt;
-        <div class="v-slider-button-wrap">
-          <div class="v-slider-button"></div>
-        </div>
+          &lt;!&ndash; 色块 &ndash;&gt;
+          <div class="v-slider-button-wrap">
+            <div class="v-slider-button"></div>
+          </div>
 
-        &lt;!&ndash;<div class="v-slider-button-wrap">
-          <div class="v-slider-button"></div>
-        </div>&ndash;&gt;
-      </div>-->
+          &lt;!&ndash;<div class="v-slider-button-wrap">
+            <div class="v-slider-button"></div>
+          </div>&ndash;&gt;
+        </div>-->
+      </div>
+      <b></b>
+    </div>
+
+    <div class="sec">
+      <b></b>
+      <div class="box"></div>
+      <b></b>
+    </div>
+
+    <div class="sec">
+      <b></b>
+      <div class="box"></div>
+      <b></b>
+    </div>
+
+    <div class="code">
+      <p>调用</p>
+      <textarea rows="20" cols="80" readonly>
+      const secs = document.getElementsByClassName('sec');
+  const boxes = document.getElementsByClassName('box');
+  const slider = new Slider(<HTMLElement>boxes[0], {
+    value: [10, 90],
+    range: true,
+    onInit(val: SliderVal) {
+      const b = secs[0].getElementsByTagName('b');
+      b[0].innerText = val[0];
+      b[1].innerText = val[1];
+    }
+  });
+
+  slider.on('changing', function (val: SliderVal) {
+    const b = secs[0].getElementsByTagName('b');
+    b[0].innerText = val[0];
+    b[1].innerText = val[1];
+  });
+
+
+
+  const slider2 = new Slider(<HTMLElement>boxes[1], {
+    value: [10, 90],
+    range: true,
+    step: 10,
+    showDots: true,
+    onInit(val: SliderVal) {
+      const b = secs[1].getElementsByTagName('b');
+      b[0].innerText = val[0];
+      b[1].innerText = val[1];
+    }
+  });
+
+  slider2.on('change', function (val: SliderVal) {
+    const b = secs[1].getElementsByTagName('b');
+    b[0].innerText = val[0];
+    b[1].innerText = val[1];
+  });
+
+
+  const slider3 = new Slider(<HTMLElement>boxes[2], {
+    value: [2, 7],
+    range: true,
+    min: 1,
+    max: 10,
+    onInit(val: SliderVal) {
+      const b = secs[2].getElementsByTagName('b');
+      b[0].innerText = val[0];
+      b[1].innerText = val[1];
+    }
+  });
+
+  slider3.on('changing', function (val: SliderVal) {
+    const b = secs[2].getElementsByTagName('b');
+    b[0].innerText = val[0];
+    b[1].innerText = val[1];
+  });
+    </textarea>
     </div>
   </div>
 

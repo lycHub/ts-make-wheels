@@ -86,6 +86,19 @@ export default class DomHandler {
     return width;
   }
 
+
+  addEvents(target, obj: { [key: string]: Function }) {
+    for (const attr in obj) {
+      target.addEventListener(attr, obj[attr]);
+    }
+  }
+
+  removeEvents(target, obj: { [key: string]: Function }) {
+    for (const attr in obj) {
+      target.removeEventListener(attr, obj[attr]);
+    }
+  }
+
   getStyle (element, styleName) {
     if (!element || !styleName) return null;
     styleName = camelCase(styleName);
