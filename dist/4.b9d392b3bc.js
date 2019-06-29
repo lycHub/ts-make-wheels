@@ -423,6 +423,7 @@ var Slider_Slider = /** @class */ (function (_super) {
 
 
 window.addEventListener('DOMContentLoaded', function () {
+    console.log('slider 6-29');
     var secs = document.getElementsByClassName('sec');
     var boxes = document.getElementsByClassName('box');
     var slider = new slider_Slider(boxes[0], {
@@ -639,4 +640,4 @@ function camelCase(name) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=4.4f3c43c180.js.map
+//# sourceMappingURL=4.b9d392b3bc.js.map
