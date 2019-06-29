@@ -17,6 +17,7 @@ export default class Slider extends EventEmitter {
 
   // 色条bar
   private bar: HTMLElement;
+  private dots: NodeListOf<Element>;
 
   // 容器长度
   private sliderWidth: number;
@@ -99,6 +100,7 @@ export default class Slider extends EventEmitter {
 
     this.bar = <HTMLElement>this.el.querySelector('.v-slider-bar');
     this.btns = this.el.getElementsByClassName('v-slider-button-wrap');
+    this.dots = this.el.querySelectorAll('.v-slider-dot');
     this.sliderWidth = this.domHandle.getOuterWidth(this.el.querySelector('.v-slider-wrap'));
     this.initEvents();
     
@@ -110,9 +112,13 @@ export default class Slider extends EventEmitter {
   }
 
   private initEvents() {
+    this.el.addEventListener('click', this.sliderClick.bind(this));
+    this.bar.addEventListener('click', this.sliderClick.bind(this));
+
     for(let a = 0; a < this.btns.length; a++) {
       this.btns[a].addEventListener('mousedown', this.handleStart.bind(this));
       this.btns[a].addEventListener('touchstart', this.handleStart.bind(this));
+      this.btns[a].addEventListener('click', this.sliderClick.bind(this));
     }
   }
 
@@ -130,6 +136,24 @@ export default class Slider extends EventEmitter {
       dots.push({ val, active });
     }
     return dots;
+  }
+
+
+  // 点击slider
+  private sliderClick(event) {
+    const current = this.getPointer(event);
+    const sliderOffsetLeft = this.el.getBoundingClientRect().left;
+    // 新值
+    let newVal = ((current - sliderOffsetLeft) / this.sliderWidth) * this.valueRange + this.options.min;
+    // console.log('newPos :', newPos);
+    const { minBtnPoi, maxBtnPoi } = this.btnPosition;
+    if (!this.options.range || newVal <= minBtnPoi) {
+      this.changeVal(newVal, "min");
+    } else if (newVal >= maxBtnPoi) {
+      this.changeVal(newVal, "max");
+    } else {
+      this.changeVal(newVal, newVal - this.currentValue[0] <= this.currentValue[1] - newVal ? "min" : "max");
+    }
   }
 
 
@@ -223,12 +247,11 @@ export default class Slider extends EventEmitter {
     return val;
   }
 
-  // 根据值改变按钮位置
+  // 根据当前值改变按钮位置
   private changeButtonPosition() {
     const val = this.currentValue;
     // (当前位置 / 100) = (当前数值 - 最小数值) / 数值范围
-    const minBtnPoi = ((val[0] - this.options.min) / this.valueRange) * 100;  // 左滑块
-    const maxBtnPoi = ((val[1] - this.options.min) / this.valueRange) * 100;  // 右滑块
+    const { minBtnPoi, maxBtnPoi } = this.btnPosition;
     (<HTMLElement>this.btns[0]).style.left = minBtnPoi + '%';
     if (this.btns[1]) {
       (<HTMLElement>this.btns[1]).style.left = maxBtnPoi + '%';
@@ -253,19 +276,19 @@ export default class Slider extends EventEmitter {
 
   // 改变断点样式
   private changeDotStyle() {
-    const dots = this.el.querySelectorAll('.v-slider-dot');
+    this.dots = this.el.querySelectorAll('.v-slider-dot');
     const barStyle = this.changeBarStyle();
 
-    for (let i = 0; i < dots.length; i++) {
+    for (let i = 0; i < this.dots.length; i++) {
       // 每个dot的left值， +4是因为每个dot都设置了margin-left: 4px。
       // 也可以直接用getComputedStyle获取
       // console.log(this.domHandle.getStyle(dots[i], 'left').slice(0, -2));
-      const left = (((<HTMLElement>dots[i]).offsetLeft + 4) / this.sliderWidth) * 100;
+      const left = (((<HTMLElement>this.dots[i]).offsetLeft + 4) / this.sliderWidth) * 100;
       const active = this.isDotActive(left, barStyle);
       if (active) {
-        dots[i].classList.add('active');
+        this.dots[i].classList.add('active');
       }else {
-        dots[i].classList.remove('active');
+        this.dots[i].classList.remove('active');
       }
     }
   }
@@ -308,5 +331,14 @@ export default class Slider extends EventEmitter {
     // step是小数就等于1，否则等于0
     const decimalCases = (String(this.options.step).split(".")[1] || "").length;
     return this.currentValue.map(nr => Number(nr.toFixed(decimalCases)));
+  }
+
+  // 获取左右滑块的位置
+  get btnPosition() {
+    const val = this.currentValue;
+    // (当前位置 / 100) = (当前数值 - 最小数值) / 数值范围
+    const minBtnPoi = ((val[0] - this.options.min) / this.valueRange) * 100;  // 左滑块
+    const maxBtnPoi = ((val[1] - this.options.min) / this.valueRange) * 100;  // 右滑块
+    return { minBtnPoi, maxBtnPoi };
   }
 }
