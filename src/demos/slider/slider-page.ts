@@ -3,7 +3,6 @@ import Slider from "./Slider.ts";
 import {SliderVal} from "./Options.ts";
 
 window.addEventListener('DOMContentLoaded', function () {
-  console.log('slider');
   const secs = document.getElementsByClassName('sec');
   const boxes = document.getElementsByClassName('box');
   const slider = new Slider(<HTMLElement>boxes[0], {
