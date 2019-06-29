@@ -1,5 +1,5 @@
 import EventEmitter from "../../tools/EventEmitter.ts";
-import {Options, SliderVal} from "./Options.ts";
+import {Options} from "./Options.ts";
 import DomHandler from "../../tools/dom.ts";
 
 type EventType = MouseEvent | TouchEvent;
@@ -17,6 +17,7 @@ export default class Slider extends EventEmitter {
 
   // 色条bar
   private bar: HTMLElement;
+  private dots: NodeListOf<Element>;
 
   // 容器长度
   private sliderWidth: number;
@@ -56,6 +57,7 @@ export default class Slider extends EventEmitter {
     // 合并选项
     this.options = new Options().merge(options);
 
+    // 赋初始值
     const initVal = this.options.value;
     this.currentValue = initVal ? this.checkLimits(Array.isArray(initVal) ? initVal : [initVal]) : this.checkLimits([0]);
 
@@ -68,14 +70,15 @@ export default class Slider extends EventEmitter {
 
     let dots = '';
     if (this.options.showDots) {
-      // 获取圆点
+      // 获取断点
       const dotsArr = this.getDots();
       dotsArr.forEach(dot => {
         const className = dot.active ? 'v-slider-dot active' : 'v-slider-dot';
         dots += `<div class="${className}" style="left: ${dot.val}%"></div>`;
       });
     }
-    // console.log(dots);
+    
+    // 渲染dom
     const maxBtnClass = this.options.range ? 'v-slider-button-wrap' : 'v-slider-button-wrap hide';
     this.el.innerHTML = `<div class="v-slider-wrap">
         <!-- 色条 -->
@@ -97,8 +100,11 @@ export default class Slider extends EventEmitter {
 
     this.bar = <HTMLElement>this.el.querySelector('.v-slider-bar');
     this.btns = this.el.getElementsByClassName('v-slider-button-wrap');
+    this.dots = this.el.querySelectorAll('.v-slider-dot');
     this.sliderWidth = this.domHandle.getOuterWidth(this.el.querySelector('.v-slider-wrap'));
     this.initEvents();
+    
+    // 初始化滑块和色条的位置
     this.changeButtonPosition();
     this.changeBarStyle();
     const value = this.options.range ? this.exportValue : this.exportValue[0];
@@ -106,13 +112,17 @@ export default class Slider extends EventEmitter {
   }
 
   private initEvents() {
+    this.el.addEventListener('click', this.sliderClick.bind(this));
+    this.bar.addEventListener('click', this.sliderClick.bind(this));
+
     for(let a = 0; a < this.btns.length; a++) {
       this.btns[a].addEventListener('mousedown', this.handleStart.bind(this));
       this.btns[a].addEventListener('touchstart', this.handleStart.bind(this));
+      this.btns[a].addEventListener('click', this.sliderClick.bind(this));
     }
   }
 
-  // 计算圆点个数和位置
+  // 计算断点个数和位置
   private getDots(): { val: number, active: boolean }[] {
     const dotCount = this.valueRange / this.options.step;
     const dots = [];
@@ -126,6 +136,24 @@ export default class Slider extends EventEmitter {
       dots.push({ val, active });
     }
     return dots;
+  }
+
+
+  // 点击slider
+  private sliderClick(event) {
+    const current = this.getPointer(event);
+    const sliderOffsetLeft = this.el.getBoundingClientRect().left;
+    // 新值
+    let newVal = ((current - sliderOffsetLeft) / this.sliderWidth) * this.valueRange + this.options.min;
+    // console.log('newPos :', newPos);
+    const { minBtnPoi, maxBtnPoi } = this.btnPosition;
+    if (!this.options.range || newVal <= minBtnPoi) {
+      this.changeVal(newVal, "min");
+    } else if (newVal >= maxBtnPoi) {
+      this.changeVal(newVal, "max");
+    } else {
+      this.changeVal(newVal, newVal - this.currentValue[0] <= this.currentValue[1] - newVal ? "min" : "max");
+    }
   }
 
 
@@ -186,7 +214,6 @@ export default class Slider extends EventEmitter {
     }
 //      console.log('newVal :', newVal);
 
-    // const modulus = this.handleDecimal(newVal, this.options.step);
     const modulus = newVal % this.options.step;
     let value = this.currentValue;
 
@@ -214,23 +241,17 @@ export default class Slider extends EventEmitter {
   // 保证currentValue的大小关系
   private checkValue(value: number[]): number[] {
     const val = value.slice();
-    /*if (index === 0 && val[index] > val[1]) {
-      val[1] = val[index];
-    }else if (index === 1 && val[index] < val[0]) {
-      val[0] = val[index];
-    }*/
     if (val[0] > val[1]) {
       [val[0], val[1]] = [val[1], val[0]];
     }
     return val;
   }
 
-  // 根据值改变按钮位置
+  // 根据当前值改变按钮位置
   private changeButtonPosition() {
     const val = this.currentValue;
     // (当前位置 / 100) = (当前数值 - 最小数值) / 数值范围
-    const minBtnPoi = ((val[0] - this.options.min) / this.valueRange) * 100;  // 左滑块
-    const maxBtnPoi = ((val[1] - this.options.min) / this.valueRange) * 100;  // 右滑块
+    const { minBtnPoi, maxBtnPoi } = this.btnPosition;
     (<HTMLElement>this.btns[0]).style.left = minBtnPoi + '%';
     if (this.btns[1]) {
       (<HTMLElement>this.btns[1]).style.left = maxBtnPoi + '%';
@@ -253,20 +274,21 @@ export default class Slider extends EventEmitter {
     return style;
   }
 
+  // 改变断点样式
   private changeDotStyle() {
-    const dots = this.el.querySelectorAll('.v-slider-dot');
+    this.dots = this.el.querySelectorAll('.v-slider-dot');
     const barStyle = this.changeBarStyle();
 
-    for (let i = 0; i < dots.length; i++) {
+    for (let i = 0; i < this.dots.length; i++) {
       // 每个dot的left值， +4是因为每个dot都设置了margin-left: 4px。
       // 也可以直接用getComputedStyle获取
-      // console.log(this.domHandle.getStyle(dots[i], 'left'));
-      const left = (((<HTMLElement>dots[i]).offsetLeft + 4) / this.sliderWidth) * 100;
+      // console.log(this.domHandle.getStyle(dots[i], 'left').slice(0, -2));
+      const left = (((<HTMLElement>this.dots[i]).offsetLeft + 4) / this.sliderWidth) * 100;
       const active = this.isDotActive(left, barStyle);
       if (active) {
-        dots[i].classList.add('active');
+        this.dots[i].classList.add('active');
       }else {
-        dots[i].classList.remove('active');
+        this.dots[i].classList.remove('active');
       }
     }
   }
@@ -278,23 +300,6 @@ export default class Slider extends EventEmitter {
   }
 
 
-  /*private handleDecimal(pos, step) {
-    if (step < 1) {
-      let sl = step.toString(),
-        multiple = 1,
-        m;
-      try {
-        m = sl.split(".")[1].length;
-      } catch (e) {
-        m = 0;
-      }
-
-      multiple = Math.pow(10, m);
-      return ((pos * multiple) % (step * multiple)) / multiple;
-    } else {
-      return pos % step;
-    }
-  }*/
 
   private getPointer(event) {
     return event.type.indexOf("touch") !== -1 ? event.touches[0].clientX : event.clientX;
@@ -326,5 +331,14 @@ export default class Slider extends EventEmitter {
     // step是小数就等于1，否则等于0
     const decimalCases = (String(this.options.step).split(".")[1] || "").length;
     return this.currentValue.map(nr => Number(nr.toFixed(decimalCases)));
+  }
+
+  // 获取左右滑块的位置
+  get btnPosition() {
+    const val = this.currentValue;
+    // (当前位置 / 100) = (当前数值 - 最小数值) / 数值范围
+    const minBtnPoi = ((val[0] - this.options.min) / this.valueRange) * 100;  // 左滑块
+    const maxBtnPoi = ((val[1] - this.options.min) / this.valueRange) * 100;  // 右滑块
+    return { minBtnPoi, maxBtnPoi };
   }
 }
