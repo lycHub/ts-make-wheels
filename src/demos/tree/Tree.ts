@@ -34,7 +34,8 @@ export default class Tree extends EventEmitter {
     const container = document.createElement('div');
     container.className = 'ts-tree';
     this.digui(this.options.data, container);
-    this.append(this.el, container);
+    this.el.appendChild(container);
+    
     this.initEvents();
   }
 
@@ -52,7 +53,6 @@ export default class Tree extends EventEmitter {
 
   // 展开/收起
   private onToggleOpen(event: MouseEvent) {
-    console.log('onToggleOpen');
     const target = <HTMLElement>event.target;
     const parent = this.findParentOfUl(target);
     if (parent) {
@@ -107,14 +107,9 @@ export default class Tree extends EventEmitter {
       if (children && children.length) {
         this.digui(item.children, li);
       }
-      this.append(ul, li);
-      this.append(container, ul);
+      ul.appendChild(li);
+      container.appendChild(ul);
     }
-  }
-
-
-  private append(container: HTMLElement, target: HTMLElement) {
-    container.appendChild(target);
   }
 
   private findParentOfUl(target: HTMLElement): HTMLElement {
