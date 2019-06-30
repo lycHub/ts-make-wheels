@@ -50,6 +50,7 @@ export default class Tree extends EventEmitter {
     }
   }
 
+  // 展开/收起
   private onToggleOpen(event: MouseEvent) {
     console.log('onToggleOpen');
     const target = <HTMLElement>event.target;
@@ -60,21 +61,35 @@ export default class Tree extends EventEmitter {
     }
   }
 
+  // 选中节点（支持多选）
   private onSelect(event: MouseEvent) {
+    const multipleSelect = event.ctrlKey || false;
     const target = <HTMLElement>event.target;
     const nodeKey = Number(target.dataset.nodeKey);
+    if (multipleSelect) {
+      this.multipleSelect(nodeKey);
+      target.classList.toggle('selected');
+    }else{
+      const titles = this.el.querySelectorAll('.ts-tree-title');
+      for (let a = 0; a < titles.length; a++) {
+        titles[a].classList.remove('selected');
+      }
+      target.classList.add('selected');
+      this.selectedNodes = [this.flatState.find(item => item.nodeKey === nodeKey)];
+    }
     
+    this.emitEvent('onSelectChange', this.selectedNodes);
+    this.trigger('selectChange', this.selectedNodes);
+  }
+
+  // 多选
+  private multipleSelect(nodeKey: number) {
     const index = this.selectedNodes.findIndex(item => item.nodeKey === nodeKey);
     if (index === -1) {
       this.selectedNodes.push(this.flatState.find(item => item.nodeKey === nodeKey));
     }else{
       this.selectedNodes.splice(index, 1);
     }
-
-    target.classList.toggle('selected');
-    
-    this.emitEvent('onSelectChange', this.selectedNodes);
-    this.trigger('selectChange', this.selectedNodes);
   }
 
   private digui(data: DataTree[], container: HTMLElement) {

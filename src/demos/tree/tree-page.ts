@@ -54,7 +54,7 @@ const data = [
             title: 'leaf 2-2-1'
           },
           {
-            title: 'leaf 2-2-1'
+            title: 'leaf 2-2-2'
           }
         ]
       }
@@ -64,11 +64,13 @@ const data = [
 
 
 window.addEventListener('DOMContentLoaded', function () {
-  // console.log(compileFlatState(data));
-  const tree = new Tree('.tree-box', {
+  const treeBox = <HTMLElement>document.querySelector('.tree-box');
+  const tree = new Tree(treeBox, {
     data,
     onSelectChange(node: Flat[]) {
+      const b = treeBox.getElementsByTagName('b')[0];
       console.log('onSelectChange', node);
+      b.innerText = '当前选中：' + JSON.stringify(node);
     }
   });
 });
