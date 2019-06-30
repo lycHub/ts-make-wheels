@@ -1,0 +1,44 @@
+.container{
+  .ts-tree{
+    font-size: 14px;
+    .ts-tree-children{
+      height: 32px;
+      overflow: hidden;
+      transition: height, .2s;
+      &.expand{
+        height: auto;
+      }
+      li{
+        margin: 8px 0;
+        .ts-tree-arrow{
+          display: inline-block;
+          width: 12px;
+          cursor: pointer;
+          transition: transform, .2s;
+          &.hide{
+            visibility: hidden;
+          }
+          &.expand{
+            transform:rotate(90deg);
+          }
+        }
+        .ts-tree-title{
+          display: inline-block;
+          padding: 0 4px;
+          border-radius: 3px;
+          cursor: pointer;
+          vertical-align: text-top;
+          color: #515a6e;
+          transition: background, .2s;
+          &:hover, &.selected{
+            background-color: #d5e8fc;
+          }
+        }
+
+        .ts-tree-children{
+          padding-left: 18px;
+        }
+      }
+    }
+  }
+}
