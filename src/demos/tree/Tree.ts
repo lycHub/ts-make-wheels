@@ -37,6 +37,8 @@ export default class Tree extends EventEmitter {
     this.el.appendChild(container);
     
     this.initEvents();
+
+    this.emitEvent('onInit', this.selectedNodes);
   }
 
 
@@ -102,8 +104,13 @@ export default class Tree extends EventEmitter {
 
       const li = document.createElement('li');
       const arrowClassName = children ? item.expand ? 'expand' : '' : 'hide';
+      const titleClassName = item.selected ? 'ts-tree-title selected' : 'ts-tree-title';
       li.innerHTML = `<i class="ts-tree-arrow ${arrowClassName}">&gt;</i>
-      <span class="ts-tree-title" data-node-key="${item.nodeKey}">${item.title}</span>`;
+      <span class="${titleClassName}" data-node-key="${item.nodeKey}">${item.title}</span>`;
+
+      if (item.selected) {
+        this.selectedNodes.push(this.flatState.find(i => i.nodeKey === item.nodeKey));
+      }
       if (children && children.length) {
         this.digui(item.children, li);
       }
