@@ -1,7 +1,7 @@
 import './tree-page.less';
 import Tree from './Tree.ts';
-import { Flat } from './Options';
-const data = [
+import { Flat, DataTree } from './Options';
+const data: DataTree[] = [
   {
     title: 'parent 1',
     expand: true,
@@ -9,6 +9,7 @@ const data = [
       {
         title: 'parent 1-1',
         expand: true,
+        selected: true,
         children: [
           {
             title: 'leaf 1-1-1'
@@ -42,7 +43,8 @@ const data = [
             title: 'leaf 2-1-1'
           },
           {
-            title: 'leaf 2-1-2'
+            title: 'leaf 2-1-2',
+            selected: true
           }
         ]
       },
@@ -65,12 +67,16 @@ const data = [
 
 window.addEventListener('DOMContentLoaded', function () {
   const treeBox = <HTMLElement>document.querySelector('.tree-box');
+  const b = treeBox.getElementsByTagName('b')[0];
   const tree = new Tree(treeBox, {
     data,
+    onInit(node: Flat[]) {
+      console.log('onInit', node);
+      b.innerText = '当前选中（按住ctrl可多选）：' + JSON.stringify(node);
+    },
     onSelectChange(node: Flat[]) {
-      const b = treeBox.getElementsByTagName('b')[0];
       console.log('onSelectChange', node);
-      b.innerText = '当前选中：' + JSON.stringify(node);
+      b.innerText = '当前选中（按住ctrl可多选）：' + JSON.stringify(node);
     }
   });
 });

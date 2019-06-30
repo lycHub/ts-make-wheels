@@ -17,7 +17,7 @@ export class Options {
   
   // 自定义事件
   onSelectChange: (node: Flat[]) => void;
-  onInit: () => void;
+  onInit: (node: Flat[]) => void;
   
   
   // 合并默认配置
