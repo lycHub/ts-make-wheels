@@ -159,6 +159,7 @@ var Tree_Tree = /** @class */ (function (_super) {
         this.digui(this.options.data, container);
         this.el.appendChild(container);
         this.initEvents();
+        this.emitEvent('onInit', this.selectedNodes);
     };
     Tree.prototype.initEvents = function () {
         var arrows = this.el.querySelectorAll('.ts-tree-arrow');
@@ -210,19 +211,27 @@ var Tree_Tree = /** @class */ (function (_super) {
         }
     };
     Tree.prototype.digui = function (data, container) {
-        for (var a = 0; a < data.length; a++) {
+        var _loop_1 = function (a) {
             var item = data[a];
             var children = item.children;
             var ul = document.createElement('ul');
             ul.className = item.expand ? 'ts-tree-children expand' : 'ts-tree-children';
             var li = document.createElement('li');
             var arrowClassName = children ? item.expand ? 'expand' : '' : 'hide';
-            li.innerHTML = "<i class=\"ts-tree-arrow " + arrowClassName + "\">&gt;</i>\n      <span class=\"ts-tree-title\" data-node-key=\"" + item.nodeKey + "\">" + item.title + "</span>";
+            var titleClassName = item.selected ? 'ts-tree-title selected' : 'ts-tree-title';
+            li.innerHTML = "<i class=\"ts-tree-arrow " + arrowClassName + "\">&gt;</i>\n      <span class=\"" + titleClassName + "\" data-node-key=\"" + item.nodeKey + "\">" + item.title + "</span>";
+            if (item.selected) {
+                this_1.selectedNodes.push(this_1.flatState.find(function (i) { return i.nodeKey === item.nodeKey; }));
+            }
             if (children && children.length) {
-                this.digui(item.children, li);
+                this_1.digui(item.children, li);
             }
             ul.appendChild(li);
             container.appendChild(ul);
+        };
+        var this_1 = this;
+        for (var a = 0; a < data.length; a++) {
+            _loop_1(a);
         }
     };
     Tree.prototype.findParentOfUl = function (target) {
@@ -280,6 +289,7 @@ var data = [
             {
                 title: 'parent 1-1',
                 expand: true,
+                selected: true,
                 children: [
                     {
                         title: 'leaf 1-1-1'
@@ -313,7 +323,8 @@ var data = [
                         title: 'leaf 2-1-1'
                     },
                     {
-                        title: 'leaf 2-1-2'
+                        title: 'leaf 2-1-2',
+                        selected: true
                     }
                 ]
             },
@@ -334,12 +345,16 @@ var data = [
 ];
 window.addEventListener('DOMContentLoaded', function () {
     var treeBox = document.querySelector('.tree-box');
+    var b = treeBox.getElementsByTagName('b')[0];
     var tree = new tree_Tree(treeBox, {
         data: data,
+        onInit: function (node) {
+            console.log('onInit', node);
+            b.innerText = '当前选中（按住ctrl可多选）：' + JSON.stringify(node);
+        },
         onSelectChange: function (node) {
-            var b = treeBox.getElementsByTagName('b')[0];
             console.log('onSelectChange', node);
-            b.innerText = '当前选中：' + JSON.stringify(node);
+            b.innerText = '当前选中（按住ctrl可多选）：' + JSON.stringify(node);
         }
     });
 });
@@ -396,4 +411,4 @@ var EventEmitter = /** @class */ (function () {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=7.0a4de3e7bf.js.map
+//# sourceMappingURL=7.d5bc1d8586.js.map
