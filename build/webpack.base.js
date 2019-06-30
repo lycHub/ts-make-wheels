@@ -10,6 +10,7 @@ module.exports = {
     carousel: './src/demos/carousel/carousel-page.ts',
     slider: './src/demos/slider/slider-page.ts',
     'color-picker': './src/demos/color-picker/color-picker.ts',
+    tree: './src/demos/tree/tree-page.ts',
   },
   module: {
     rules: [{
@@ -22,6 +23,11 @@ module.exports = {
     }]
   },
   plugins: [
+    new HtmlWebpackPlugin({
+      title: 'Tree',
+      filename: 'demos/tree/tree-page.html',
+      template: resolve(__dirname, '../src/demos/tree/tree-page.html')
+    }),
     new HtmlWebpackPlugin({
       title: '取色器',
       filename: 'demos/color-picker/color-picker.html',
