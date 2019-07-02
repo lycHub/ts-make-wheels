@@ -1,4 +1,4 @@
-#map{
+#map {
   position: relative;
   width: 800px;
   height: 600px;
@@ -6,9 +6,10 @@
   background-color: lightgray;
   overflow: hidden;
 }
-.btns, h2{
+.btns,
+h2 {
   text-align: center;
 }
-h2{
+h2 {
   margin: 20px 0;
 }

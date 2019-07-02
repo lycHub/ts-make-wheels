@@ -1,5 +1,6 @@
 import { Options } from "../Options.ts";
 import Food from "./Food.ts";
+import Game from "./Game.ts";
 
 export enum Direction { Left, Right, Up, Down };
 type SnakeMoveDirection = Direction;
@@ -11,6 +12,7 @@ export type SnakeOptions = {
     width: number;
     height: number;
     direction: SnakeMoveDirection;
+    speed: number;
     body: SnakeBody[];
 };
 export default class Snake extends Options {
@@ -22,6 +24,7 @@ export default class Snake extends Options {
             width: 20,
             height: 20,
             direction: Direction.Right,
+            speed: 200,
             body: [
                 {x: 3, y: 2, color: 'red' },
                 {x: 2, y: 2, color: 'blue' },
@@ -30,7 +33,6 @@ export default class Snake extends Options {
         });
         
         this.options = super.merge(options);
-        console.log('options :', this.options);
     }
 
     // 渲染蛇
@@ -50,7 +52,7 @@ export default class Snake extends Options {
         });
     }
 
-    move(food: Food) {
+    move(food: Food, game: Game, cb: () => void) {
         const body = this.options.body;
         for(let a = body.length - 1; a > 0; a--) {
             // 每一格body都移动到他前面那个body上
@@ -83,6 +85,9 @@ export default class Snake extends Options {
             const lastBody = this.options.body[this.options.body.length - 1];
             this.options.body.push({ ...lastBody });
             food.render(this.map);
+            this.options.speed = Math.max(10, this.options.speed - 30);
+            if (cb) cb();
+            game.runSnake(this.options.speed);
         }
     }
 
