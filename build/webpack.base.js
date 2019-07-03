@@ -11,6 +11,7 @@ module.exports = {
     slider: './src/demos/slider/slider-page.ts',
     'color-picker': './src/demos/color-picker/color-picker.ts',
     tree: './src/demos/tree/tree-page.ts',
+    snake: './src/demos/snake/snake-page.ts'
   },
   module: {
     rules: [{
@@ -23,6 +24,11 @@ module.exports = {
     }]
   },
   plugins: [
+    new HtmlWebpackPlugin({
+      title: 'Snake',
+      filename: 'demos/snake/snake-page.html',
+      template: resolve(__dirname, '../src/demos/snake/snake-page.html')
+    }),
     new HtmlWebpackPlugin({
       title: 'Tree',
       filename: 'demos/tree/tree-page.html',
