@@ -81,10 +81,58 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 173);
+/******/ 	return __webpack_require__(__webpack_require__.s = 175);
 /******/ })
 /************************************************************************/
 /******/ ({
+
+/***/ 1:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var EventEmitter = /** @class */ (function () {
+    function EventEmitter(names) {
+        var _this = this;
+        this.events = {};
+        this.eventTypes = {};
+        names.forEach(function (type) { return _this.eventTypes[type] = type; });
+    }
+    EventEmitter.prototype.on = function (type, fn, context) {
+        if (context === void 0) { context = this; }
+        if (!this.events[type]) {
+            this.events[type] = [];
+        }
+        // 保存type事件对应的函数
+        this.events[type].push([fn, context]);
+    };
+    // 触发type事件
+    EventEmitter.prototype.trigger = function (type) {
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
+        var events = this.events[type];
+        if (!events)
+            return;
+        var len = events.length;
+        var eventsCopy = events.slice();
+        var ret;
+        for (var i = 0; i < len; i++) {
+            var event_1 = eventsCopy[i];
+            var fn = event_1[0], context = event_1[1];
+            if (fn) {
+                ret = fn.apply(context, args);
+                if (ret === true)
+                    break;
+            }
+        }
+    };
+    return EventEmitter;
+}());
+/* harmony default export */ __webpack_exports__["a"] = (EventEmitter);
+
+
+/***/ }),
 
 /***/ 169:
 /***/ (function(module, exports, __webpack_require__) {
@@ -93,7 +141,7 @@
 
 /***/ }),
 
-/***/ 173:
+/***/ 175:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -103,7 +151,7 @@ __webpack_require__.r(__webpack_exports__);
 var color_picker = __webpack_require__(169);
 
 // EXTERNAL MODULE: ./src/tools/EventEmitter.ts
-var EventEmitter = __webpack_require__(2);
+var EventEmitter = __webpack_require__(1);
 
 // CONCATENATED MODULE: ./src/demos/color-picker/Options.ts
 var Options = /** @class */ (function () {
@@ -478,54 +526,6 @@ window.addEventListener('DOMContentLoaded', function () {
 
 /***/ }),
 
-/***/ 2:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var EventEmitter = /** @class */ (function () {
-    function EventEmitter(names) {
-        var _this = this;
-        this.events = {};
-        this.eventTypes = {};
-        names.forEach(function (type) { return _this.eventTypes[type] = type; });
-    }
-    EventEmitter.prototype.on = function (type, fn, context) {
-        if (context === void 0) { context = this; }
-        if (!this.events[type]) {
-            this.events[type] = [];
-        }
-        // 保存type事件对应的函数
-        this.events[type].push([fn, context]);
-    };
-    // 触发type事件
-    EventEmitter.prototype.trigger = function (type) {
-        var args = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            args[_i - 1] = arguments[_i];
-        }
-        var events = this.events[type];
-        if (!events)
-            return;
-        var len = events.length;
-        var eventsCopy = events.slice();
-        var ret;
-        for (var i = 0; i < len; i++) {
-            var event_1 = eventsCopy[i];
-            var fn = event_1[0], context = event_1[1];
-            if (fn) {
-                ret = fn.apply(context, args);
-                if (ret === true)
-                    break;
-            }
-        }
-    };
-    return EventEmitter;
-}());
-/* harmony default export */ __webpack_exports__["a"] = (EventEmitter);
-
-
-/***/ }),
-
 /***/ 3:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -641,4 +641,4 @@ function camelCase(name) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=1.27ed2bf55f.js.map
+//# sourceMappingURL=1.e0eb8d3742.js.map

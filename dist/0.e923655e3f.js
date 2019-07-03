@@ -81,10 +81,58 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 171);
+/******/ 	return __webpack_require__(__webpack_require__.s = 178);
 /******/ })
 /************************************************************************/
 /******/ ({
+
+/***/ 1:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+var EventEmitter = /** @class */ (function () {
+    function EventEmitter(names) {
+        var _this = this;
+        this.events = {};
+        this.eventTypes = {};
+        names.forEach(function (type) { return _this.eventTypes[type] = type; });
+    }
+    EventEmitter.prototype.on = function (type, fn, context) {
+        if (context === void 0) { context = this; }
+        if (!this.events[type]) {
+            this.events[type] = [];
+        }
+        // 保存type事件对应的函数
+        this.events[type].push([fn, context]);
+    };
+    // 触发type事件
+    EventEmitter.prototype.trigger = function (type) {
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
+        var events = this.events[type];
+        if (!events)
+            return;
+        var len = events.length;
+        var eventsCopy = events.slice();
+        var ret;
+        for (var i = 0; i < len; i++) {
+            var event_1 = eventsCopy[i];
+            var fn = event_1[0], context = event_1[1];
+            if (fn) {
+                ret = fn.apply(context, args);
+                if (ret === true)
+                    break;
+            }
+        }
+    };
+    return EventEmitter;
+}());
+/* harmony default export */ __webpack_exports__["a"] = (EventEmitter);
+
+
+/***/ }),
 
 /***/ 167:
 /***/ (function(module, exports, __webpack_require__) {
@@ -93,7 +141,7 @@
 
 /***/ }),
 
-/***/ 171:
+/***/ 178:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -103,7 +151,7 @@ __webpack_require__.r(__webpack_exports__);
 var carousel_page = __webpack_require__(167);
 
 // EXTERNAL MODULE: ./src/tools/EventEmitter.ts
-var EventEmitter = __webpack_require__(2);
+var EventEmitter = __webpack_require__(1);
 
 // CONCATENATED MODULE: ./src/demos/carousel/Options.ts
 var Options = /** @class */ (function () {
@@ -333,55 +381,7 @@ window.addEventListener('DOMContentLoaded', function () {
 });
 
 
-/***/ }),
-
-/***/ 2:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-var EventEmitter = /** @class */ (function () {
-    function EventEmitter(names) {
-        var _this = this;
-        this.events = {};
-        this.eventTypes = {};
-        names.forEach(function (type) { return _this.eventTypes[type] = type; });
-    }
-    EventEmitter.prototype.on = function (type, fn, context) {
-        if (context === void 0) { context = this; }
-        if (!this.events[type]) {
-            this.events[type] = [];
-        }
-        // 保存type事件对应的函数
-        this.events[type].push([fn, context]);
-    };
-    // 触发type事件
-    EventEmitter.prototype.trigger = function (type) {
-        var args = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            args[_i - 1] = arguments[_i];
-        }
-        var events = this.events[type];
-        if (!events)
-            return;
-        var len = events.length;
-        var eventsCopy = events.slice();
-        var ret;
-        for (var i = 0; i < len; i++) {
-            var event_1 = eventsCopy[i];
-            var fn = event_1[0], context = event_1[1];
-            if (fn) {
-                ret = fn.apply(context, args);
-                if (ret === true)
-                    break;
-            }
-        }
-    };
-    return EventEmitter;
-}());
-/* harmony default export */ __webpack_exports__["a"] = (EventEmitter);
-
-
 /***/ })
 
 /******/ });
-//# sourceMappingURL=0.e97455dcfd.js.map
+//# sourceMappingURL=0.e923655e3f.js.map
