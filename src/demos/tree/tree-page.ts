@@ -1,6 +1,10 @@
 import './tree-page.less';
 import Tree from './Tree.ts';
 import { Flat, DataTree } from './Options';
+
+const isCurrentPage = /tree/.test(location.href);
+
+
 const data: DataTree[] = [
   {
     title: 'parent 1',
@@ -66,20 +70,23 @@ const data: DataTree[] = [
 
 
 window.addEventListener('DOMContentLoaded', function () {
-  const treeBox = <HTMLElement>document.querySelector('.tree-box');
-  if (treeBox) {
-    const b = treeBox.getElementsByTagName('b')[0];
-    const tree = new Tree(treeBox, {
-      data,
-      onInit(node: Flat[]) {
-        console.log('onInit', node);
-        b.innerText = '当前选中（按住ctrl可多选）：' + JSON.stringify(node);
-      },
-      onSelectChange(node: Flat[]) {
-        console.log('onSelectChange', node);
-        b.innerText = '当前选中（按住ctrl可多选）：' + JSON.stringify(node);
-      }
-    });
+  if (isCurrentPage) {
+    const treeBox = <HTMLElement>document.querySelector('.tree-box');
+    if (treeBox) {
+      const b = treeBox.getElementsByTagName('b')[0];
+      const tree = new Tree(treeBox, {
+        data,
+        onInit(node: Flat[]) {
+          console.log('onInit', node);
+          b.innerText = '当前选中（按住ctrl可多选）：' + JSON.stringify(node);
+        },
+        onSelectChange(node: Flat[]) {
+          console.log('onSelectChange', node);
+          b.innerText = '当前选中（按住ctrl可多选）：' + JSON.stringify(node);
+        }
+      });
+    }
   }
+ 
   
 });
