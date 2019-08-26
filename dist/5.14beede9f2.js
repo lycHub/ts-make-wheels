@@ -470,56 +470,58 @@ var Slider_Slider = /** @class */ (function (_super) {
 // CONCATENATED MODULE: ./src/demos/slider/slider-page.ts
 
 
+var isCurrentPage = /slider/.test(location.href);
 window.addEventListener('DOMContentLoaded', function () {
-    console.log('slider 6-29');
-    var secs = document.getElementsByClassName('sec');
-    var boxes = document.getElementsByClassName('box');
-    var slider = new slider_Slider(boxes[0], {
-        value: [10, 90],
-        range: true,
-        onInit: function (val) {
-            var b = secs[0].getElementsByTagName('b');
+    if (isCurrentPage) {
+        var secs_1 = document.getElementsByClassName('sec');
+        var boxes = document.getElementsByClassName('box');
+        var slider = new slider_Slider(boxes[0], {
+            value: [10, 90],
+            range: true,
+            onInit: function (val) {
+                var b = secs_1[0].getElementsByTagName('b');
+                b[0].innerText = val[0];
+                b[1].innerText = val[1];
+            }
+        });
+        slider.on('changing', function (val) {
+            var b = secs_1[0].getElementsByTagName('b');
             b[0].innerText = val[0];
             b[1].innerText = val[1];
-        }
-    });
-    slider.on('changing', function (val) {
-        var b = secs[0].getElementsByTagName('b');
-        b[0].innerText = val[0];
-        b[1].innerText = val[1];
-    });
-    var slider2 = new slider_Slider(boxes[1], {
-        value: [10, 90],
-        range: true,
-        step: 10,
-        showDots: true,
-        onInit: function (val) {
-            var b = secs[1].getElementsByTagName('b');
+        });
+        var slider2 = new slider_Slider(boxes[1], {
+            value: [10, 90],
+            range: true,
+            step: 10,
+            showDots: true,
+            onInit: function (val) {
+                var b = secs_1[1].getElementsByTagName('b');
+                b[0].innerText = val[0];
+                b[1].innerText = val[1];
+            }
+        });
+        slider2.on('change', function (val) {
+            var b = secs_1[1].getElementsByTagName('b');
             b[0].innerText = val[0];
             b[1].innerText = val[1];
-        }
-    });
-    slider2.on('change', function (val) {
-        var b = secs[1].getElementsByTagName('b');
-        b[0].innerText = val[0];
-        b[1].innerText = val[1];
-    });
-    var slider3 = new slider_Slider(boxes[2], {
-        value: [2, 7],
-        range: true,
-        min: 1,
-        max: 10,
-        onInit: function (val) {
-            var b = secs[2].getElementsByTagName('b');
+        });
+        var slider3 = new slider_Slider(boxes[2], {
+            value: [2, 7],
+            range: true,
+            min: 1,
+            max: 10,
+            onInit: function (val) {
+                var b = secs_1[2].getElementsByTagName('b');
+                b[0].innerText = val[0];
+                b[1].innerText = val[1];
+            }
+        });
+        slider3.on('changing', function (val) {
+            var b = secs_1[2].getElementsByTagName('b');
             b[0].innerText = val[0];
             b[1].innerText = val[1];
-        }
-    });
-    slider3.on('changing', function (val) {
-        var b = secs[2].getElementsByTagName('b');
-        b[0].innerText = val[0];
-        b[1].innerText = val[1];
-    });
+        });
+    }
 });
 
 
@@ -640,4 +642,4 @@ function camelCase(name) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=5.03b477fc38.js.map
+//# sourceMappingURL=5.14beede9f2.js.map

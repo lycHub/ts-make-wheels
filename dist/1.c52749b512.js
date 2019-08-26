@@ -508,19 +508,21 @@ var ColorPicker_ColorPicker = /** @class */ (function (_super) {
 // CONCATENATED MODULE: ./src/demos/color-picker/color-picker.ts
 
 
+var isCurrentPage = /color-picker/.test(location.href);
 window.addEventListener('DOMContentLoaded', function () {
-    console.log('color-picker');
-    var b = document.getElementsByTagName('b')[0];
-    var box = document.getElementsByClassName('color-box')[0];
-    var cp = new color_picker_ColorPicker(box, {
-        defaultColor: '#49AF4F',
-        onInit: function (color) {
-            b.innerText = color;
-        },
-        onChanging: function (color) {
-            b.innerText = color;
-        }
-    });
+    if (isCurrentPage) {
+        var b_1 = document.getElementsByTagName('b')[0];
+        var box = document.getElementsByClassName('color-box')[0];
+        var cp = new color_picker_ColorPicker(box, {
+            defaultColor: '#49AF4F',
+            onInit: function (color) {
+                b_1.innerText = color;
+            },
+            onChanging: function (color) {
+                b_1.innerText = color;
+            }
+        });
+    }
 });
 
 
@@ -641,4 +643,4 @@ function camelCase(name) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=1.e0eb8d3742.js.map
+//# sourceMappingURL=1.c52749b512.js.map

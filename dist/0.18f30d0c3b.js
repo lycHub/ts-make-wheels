@@ -359,29 +359,32 @@ var Carousel_Carousel = /** @class */ (function (_super) {
 // CONCATENATED MODULE: ./src/demos/carousel/carousel-page.ts
 
 
+var isCurrentPage = /carousel/.test(location.href);
 window.addEventListener('DOMContentLoaded', function () {
-    var carousels = document.getElementsByClassName('carousel');
-    var carousel = new carousel_Carousel(carousels[0], {
-        loop: true,
-        onInit: function () {
-            console.log('onInit');
-        },
-        onTransitionEnd: function (index) {
-            console.log('onTransitionEnd：' + index);
-        }
-    });
-    var carousel2 = new carousel_Carousel(carousels[1], {
-        loop: true,
-        autoplay: true,
-        delay: 1000
-    });
-    carousel2.on('transitionEnd', function (index) {
-        console.log('transitionEnd：' + index);
-    });
+    if (isCurrentPage) {
+        var carousels = document.getElementsByClassName('carousel');
+        var carousel = new carousel_Carousel(carousels[0], {
+            loop: true,
+            onInit: function () {
+                console.log('onInit');
+            },
+            onTransitionEnd: function (index) {
+                console.log('onTransitionEnd：' + index);
+            }
+        });
+        var carousel2 = new carousel_Carousel(carousels[1], {
+            loop: true,
+            autoplay: true,
+            delay: 1000
+        });
+        carousel2.on('transitionEnd', function (index) {
+            console.log('transitionEnd：' + index);
+        });
+    }
 });
 
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=0.e923655e3f.js.map
+//# sourceMappingURL=0.18f30d0c3b.js.map

@@ -441,28 +441,31 @@ var Game_Game = /** @class */ (function (_super) {
 // CONCATENATED MODULE: ./src/demos/snake/snake-page.ts
 
 
+var isCurrentPage = /snake/.test(location.href);
 window.addEventListener('DOMContentLoaded', function () {
-    var btns = document.getElementsByTagName('button');
-    var h2 = document.getElementsByTagName('h2')[0];
-    var map = document.getElementById('map');
-    var game = new js_Game(map);
-    game.on('score-change', function (score) {
-        console.log('score change', score);
-        h2.innerText = '当前得分：' + score;
-    });
-    game.on('over', function (score) {
-        alert('over, 当前得分：' + score);
-    });
-    game.on('refresh', function () {
-        h2.innerText = '当前得分：0';
-    });
-    btns[0].addEventListener('click', game.start.bind(game));
-    btns[1].addEventListener('click', game.pause.bind(game));
-    btns[2].addEventListener('click', game.refresh.bind(game));
+    if (isCurrentPage) {
+        var btns = document.getElementsByTagName('button');
+        var h2_1 = document.getElementsByTagName('h2')[0];
+        var map = document.getElementById('map');
+        var game = new js_Game(map);
+        game.on('score-change', function (score) {
+            console.log('score change', score);
+            h2_1.innerText = '当前得分：' + score;
+        });
+        game.on('over', function (score) {
+            alert('over, 当前得分：' + score);
+        });
+        game.on('refresh', function () {
+            h2_1.innerText = '当前得分：0';
+        });
+        btns[0].addEventListener('click', game.start.bind(game));
+        btns[1].addEventListener('click', game.pause.bind(game));
+        btns[2].addEventListener('click', game.refresh.bind(game));
+    }
 });
 
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=6.d702e6ea0f.js.map
+//# sourceMappingURL=6.c04fe29606.js.map

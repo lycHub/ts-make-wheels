@@ -329,6 +329,7 @@ var Tree_Tree = /** @class */ (function (_super) {
 // CONCATENATED MODULE: ./src/demos/tree/tree-page.ts
 
 
+var isCurrentPage = /tree/.test(location.href);
 var data = [
     {
         title: 'parent 1',
@@ -392,23 +393,27 @@ var data = [
     }
 ];
 window.addEventListener('DOMContentLoaded', function () {
-    var treeBox = document.querySelector('.tree-box');
-    var b = treeBox.getElementsByTagName('b')[0];
-    var tree = new tree_Tree(treeBox, {
-        data: data,
-        onInit: function (node) {
-            console.log('onInit', node);
-            b.innerText = '当前选中（按住ctrl可多选）：' + JSON.stringify(node);
-        },
-        onSelectChange: function (node) {
-            console.log('onSelectChange', node);
-            b.innerText = '当前选中（按住ctrl可多选）：' + JSON.stringify(node);
+    if (isCurrentPage) {
+        var treeBox = document.querySelector('.tree-box');
+        if (treeBox) {
+            var b_1 = treeBox.getElementsByTagName('b')[0];
+            var tree = new tree_Tree(treeBox, {
+                data: data,
+                onInit: function (node) {
+                    console.log('onInit', node);
+                    b_1.innerText = '当前选中（按住ctrl可多选）：' + JSON.stringify(node);
+                },
+                onSelectChange: function (node) {
+                    console.log('onSelectChange', node);
+                    b_1.innerText = '当前选中（按住ctrl可多选）：' + JSON.stringify(node);
+                }
+            });
         }
-    });
+    }
 });
 
 
 /***/ })
 
 /******/ });
-//# sourceMappingURL=8.652acc8977.js.map
+//# sourceMappingURL=8.2714bdd1b2.js.map

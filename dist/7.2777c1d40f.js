@@ -338,29 +338,32 @@ var Tooltip_ToolTip = /** @class */ (function () {
 // CONCATENATED MODULE: ./src/demos/tool-tip/tool-tip.ts
 
 
+var isCurrentPage = /tool-tip/.test(location.href);
 window.addEventListener('DOMContentLoaded', function () {
-    var el = document.getElementsByClassName('demo');
-    var tooltip = new Tooltip(el[0], {
-        text: 'tooltip',
-        postion: 'top'
-    });
-    var tooltip1 = new Tooltip(el[1], {
-        text: 'tooltip1',
-        postion: 'right'
-    });
-    var toolti2 = new Tooltip(el[2], {
-        text: 'tooltip2',
-        postion: 'left',
-        tooltipEvent: 'click'
-    });
-    var tooltip3 = new Tooltip(el[3], {
-        text: 'tooltip3',
-        showDelay: 2000
-    });
-    var tooltip4 = new Tooltip(el[4], {
-        text: 'tooltip4',
-        life: 3000
-    });
+    if (isCurrentPage) {
+        var el = document.getElementsByClassName('demo');
+        var tooltip = new Tooltip(el[0], {
+            text: 'tooltip',
+            postion: 'top'
+        });
+        var tooltip1 = new Tooltip(el[1], {
+            text: 'tooltip1',
+            postion: 'right'
+        });
+        var toolti2 = new Tooltip(el[2], {
+            text: 'tooltip2',
+            postion: 'left',
+            tooltipEvent: 'click'
+        });
+        var tooltip3 = new Tooltip(el[3], {
+            text: 'tooltip3',
+            showDelay: 2000
+        });
+        var tooltip4 = new Tooltip(el[4], {
+            text: 'tooltip4',
+            life: 3000
+        });
+    }
 });
 
 
@@ -481,4 +484,4 @@ function camelCase(name) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=7.5f61e54729.js.map
+//# sourceMappingURL=7.2777c1d40f.js.map

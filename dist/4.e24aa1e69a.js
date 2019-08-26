@@ -431,33 +431,36 @@ var ScrollPanel_ScrollPanel = /** @class */ (function (_super) {
 // CONCATENATED MODULE: ./src/demos/scroll-panel/scroll-panel.ts
 
 
+var isCurrentPage = /scroll-panel/.test(location.href);
 window.addEventListener('DOMContentLoaded', function () {
-    var spanEls = document.querySelectorAll('.exs .ui-scrollpanel');
-    var panel = new ScrollPanel_ScrollPanel(spanEls[0]);
-    var panel2 = new ScrollPanel_ScrollPanel(spanEls[1], {
-        disableX: true,
-        onDragStart: function (arg) {
-            console.log('onDragStart', arg);
-        },
-        onDragMove: function (arg) {
-            console.log('onDragMove', arg);
-        },
-        onDragEnd: function (arg) {
-            console.log('onDragEnd', arg);
-        }
-    });
-    var panel3 = new ScrollPanel_ScrollPanel(spanEls[2], {
-        disableY: true
-    });
-    panel3.on('dragStart', function (arg) {
-        console.log('DragStart', arg);
-    });
-    panel3.on('dragMove', function (arg) {
-        console.log('DragMove', arg);
-    });
-    panel3.on('dragEnd', function (arg) {
-        console.log('DragEnd', arg);
-    });
+    if (isCurrentPage) {
+        var spanEls = document.querySelectorAll('.exs .ui-scrollpanel');
+        var panel = new ScrollPanel_ScrollPanel(spanEls[0]);
+        var panel2 = new ScrollPanel_ScrollPanel(spanEls[1], {
+            disableX: true,
+            onDragStart: function (arg) {
+                console.log('onDragStart', arg);
+            },
+            onDragMove: function (arg) {
+                console.log('onDragMove', arg);
+            },
+            onDragEnd: function (arg) {
+                console.log('onDragEnd', arg);
+            }
+        });
+        var panel3 = new ScrollPanel_ScrollPanel(spanEls[2], {
+            disableY: true
+        });
+        panel3.on('dragStart', function (arg) {
+            console.log('DragStart', arg);
+        });
+        panel3.on('dragMove', function (arg) {
+            console.log('DragMove', arg);
+        });
+        panel3.on('dragEnd', function (arg) {
+            console.log('DragEnd', arg);
+        });
+    }
 });
 
 
@@ -578,4 +581,4 @@ function camelCase(name) {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=4.a585285951.js.map
+//# sourceMappingURL=4.e24aa1e69a.js.map

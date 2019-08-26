@@ -521,42 +521,45 @@ var DatePicker_DatePicker = /** @class */ (function (_super) {
 
 
 
+var isCurrentPage = /datepicker/.test(location.href);
 var currentDate = new Date();
 var datepicker_clickableDate = [Object(date_fns["subDays"])(currentDate, 2), Object(date_fns["addDays"])(currentDate, 28)];
 var datepicker_defaultDate = Object(date_fns["addDays"])(currentDate, 5);
 var defaultDate2 = [currentDate, Object(date_fns["addDays"])(currentDate, 30)];
 var clickableDate2 = [Object(date_fns["subDays"])(currentDate, 2), Object(date_fns["addDays"])(currentDate, 58)];
 window.addEventListener('DOMContentLoaded', function () {
-    var datepickerWrap = document.getElementsByClassName('calendar-wrapper');
-    var datepicker = new DatePicker_DatePicker(datepickerWrap[0], {
-        clickableDate: datepicker_clickableDate,
-        defaultDate: datepicker_defaultDate,
-        monthNum: 3,
-        onInit: function () {
-            // console.log('onInit');
-        },
-        onChange: function (selectedDate) {
-            // console.log(selectedDate);
-        }
-    });
-    datepicker.on('change', function (selectedDate) {
-        console.log('on change', selectedDate);
-    });
-    var datepicker2 = new DatePicker_DatePicker(datepickerWrap[1], {
-        range: true,
-        defaultDate: defaultDate2,
-        clickableDate: clickableDate2,
-        monthNum: 4,
-        onInit: function () {
-            // console.log('onInit');
-        },
-        onChange: function (selectedDate) {
-            // console.log('range', selectedDate);
-        }
-    });
-    datepicker2.on('change', function (selectedDate) {
-        console.log('on change', selectedDate);
-    });
+    if (isCurrentPage) {
+        var datepickerWrap = document.getElementsByClassName('calendar-wrapper');
+        var datepicker = new DatePicker_DatePicker(datepickerWrap[0], {
+            clickableDate: datepicker_clickableDate,
+            defaultDate: datepicker_defaultDate,
+            monthNum: 3,
+            onInit: function () {
+                // console.log('onInit');
+            },
+            onChange: function (selectedDate) {
+                // console.log(selectedDate);
+            }
+        });
+        datepicker.on('change', function (selectedDate) {
+            console.log('on change', selectedDate);
+        });
+        var datepicker2 = new DatePicker_DatePicker(datepickerWrap[1], {
+            range: true,
+            defaultDate: defaultDate2,
+            clickableDate: clickableDate2,
+            monthNum: 4,
+            onInit: function () {
+                // console.log('onInit');
+            },
+            onChange: function (selectedDate) {
+                // console.log('range', selectedDate);
+            }
+        });
+        datepicker2.on('change', function (selectedDate) {
+            console.log('on change', selectedDate);
+        });
+    }
 });
 
 
@@ -570,4 +573,4 @@ window.addEventListener('DOMContentLoaded', function () {
 /***/ })
 
 /******/ });
-//# sourceMappingURL=2.6fa5f4f917.js.map
+//# sourceMappingURL=2.b3f48d563e.js.map
